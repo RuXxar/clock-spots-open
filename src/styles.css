@@ -382,6 +382,38 @@ button.primary,
   filter: drop-shadow(0 0 0.35rem rgba(230, 184, 91, 0.8));
 }
 
+.mechanic-guide-layer {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.limit-cut-layer marker path {
+  fill: var(--gold);
+}
+
+.limit-cut-link {
+  stroke: var(--gold);
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-dasharray: 3.8 2.8;
+  animation: tether-flow 620ms linear infinite;
+  filter: drop-shadow(0 0 0.45rem rgba(230, 184, 91, 0.88));
+}
+
+.bug-pair-link {
+  stroke: #60a5fa;
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-dasharray: 2.5 2.5;
+  animation: tether-flow 620ms linear infinite;
+  filter: drop-shadow(0 0 0.42rem rgba(96, 165, 250, 0.78));
+}
+
 .center-score {
   position: absolute;
   top: 50%;
@@ -524,9 +556,16 @@ button.primary,
   background: #8b5cf6;
 }
 
-.token-marker.flare,
-.token-marker.limit {
+.token-marker.flare {
   background: #f97316;
+}
+
+.token-marker.limit {
+  width: 1.55rem;
+  height: 1.55rem;
+  border: 0;
+  background: transparent;
+  filter: drop-shadow(0 1px 0.18rem rgba(0, 0, 0, 0.7));
 }
 
 .token-marker.low-hp {
@@ -607,10 +646,11 @@ button.primary,
 
 .order-panel li button {
   width: 100%;
-  min-height: 2.2rem;
+  min-height: 2.6rem;
   justify-content: flex-start;
+  align-items: flex-start;
   border-color: transparent;
-  padding-inline: 0.35rem 0.55rem;
+  padding: 0.42rem 0.55rem 0.48rem 0.35rem;
   background: transparent;
   text-align: left;
 }
@@ -626,8 +666,26 @@ button.primary,
   color: var(--gold);
 }
 
-.order-panel li span {
+.operation-copy {
+  display: grid;
+  gap: 0.12rem;
   overflow-wrap: anywhere;
+}
+
+.operation-label {
+  font-weight: 700;
+}
+
+.operation-description {
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.25;
+}
+
+.order-panel li button.active .operation-description,
+.order-panel li button:hover .operation-description,
+.order-panel li button:focus-visible .operation-description {
+  color: #d8e1ee;
 }
 
 .modal-backdrop {

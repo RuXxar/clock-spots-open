@@ -73,7 +73,7 @@ export function Board({
         style={{ "--arena-image": `url("${arenaImageUrl()}")` } as CSSProperties}
       >
         <div className="arena-grid" aria-hidden="true" />
-        <OperationOverlay puzzle={puzzle} activeKind={activeKind} />
+        <OperationOverlay puzzle={puzzle} board={board} activeKind={activeKind} />
         <TetherLayer puzzle={puzzle} board={board} activeKind={activeKind} />
         <FixedMarkers puzzle={puzzle} activeKind={activeKind} />
         <div className="center-score" aria-live="polite">
@@ -146,11 +146,21 @@ export function Board({
   );
 }
 
-function OperationOverlay({ puzzle, activeKind }: { puzzle: Puzzle; activeKind: OperationKind }) {
+function OperationOverlay({
+  puzzle,
+  board,
+  activeKind,
+}: {
+  puzzle: Puzzle;
+  board: BoardSlots;
+  activeKind: OperationKind;
+}) {
   return (
     <>
       <CleaveZone puzzle={puzzle} activeKind={activeKind} />
       <KnockbackVectors puzzle={puzzle} activeKind={activeKind} />
+      <LimitCutSequence puzzle={puzzle} board={board} activeKind={activeKind} />
+      <BugPairLinks puzzle={puzzle} board={board} activeKind={activeKind} />
     </>
   );
 }
@@ -202,6 +212,94 @@ function KnockbackVectors({ puzzle, activeKind }: { puzzle: Puzzle; activeKind: 
           markerEnd="url(#knockback-arrow)"
         />
       ))}
+    </svg>
+  );
+}
+
+function LimitCutSequence({
+  puzzle,
+  board,
+  activeKind,
+}: {
+  puzzle: Puzzle;
+  board: BoardSlots;
+  activeKind: OperationKind;
+}) {
+  if (activeKind !== "limit-cut" || puzzle.markers.limitCut.length < 2) {
+    return null;
+  }
+
+  const sequence = [...puzzle.markers.limitCut].sort((a, b) => a.order - b.order);
+
+  return (
+    <svg className="mechanic-guide-layer limit-cut-layer" viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <marker
+          id="limit-cut-arrow"
+          markerWidth="5"
+          markerHeight="5"
+          refX="4"
+          refY="2.5"
+          orient="auto"
+        >
+          <path d="M0,0 L5,2.5 L0,5 Z" />
+        </marker>
+      </defs>
+      {sequence.map((marker, index) => {
+        const next = sequence[(index + 1) % sequence.length];
+        const from = POINTS[positionOfJob(board, marker.job)];
+        const to = POINTS[positionOfJob(board, next.job)];
+        return (
+          <line
+            className="limit-cut-link"
+            key={`${marker.job}-${next.job}`}
+            markerEnd="url(#limit-cut-arrow)"
+            x1={from.x}
+            y1={from.y}
+            x2={to.x}
+            y2={to.y}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+function BugPairLinks({
+  puzzle,
+  board,
+  activeKind,
+}: {
+  puzzle: Puzzle;
+  board: BoardSlots;
+  activeKind: OperationKind;
+}) {
+  if (
+    activeKind !== "hello-world" ||
+    puzzle.markers.redBugJobs.length === 0 ||
+    puzzle.markers.blueBugJobs.length === 0
+  ) {
+    return null;
+  }
+
+  return (
+    <svg className="mechanic-guide-layer bug-pair-layer" viewBox="0 0 100 100" aria-hidden="true">
+      {puzzle.markers.redBugJobs.flatMap((redJob) => {
+        const red = POINTS[positionOfJob(board, redJob)];
+        return puzzle.markers.blueBugJobs.map((blueJob) => {
+          const blue = POINTS[positionOfJob(board, blueJob)];
+          return (
+            <line
+              className="bug-pair-link"
+              key={`${redJob}-${blueJob}`}
+              x1={red.x}
+              y1={red.y}
+              x2={blue.x}
+              y2={blue.y}
+            />
+          );
+        });
+      })}
     </svg>
   );
 }
@@ -486,9 +584,9 @@ function MarkerStack({ puzzle, job }: { puzzle: Puzzle; job: JobId }) {
     markers.push({
       key: "limit",
       className: "limit",
-      label: `Limit cut ${limit.order}`,
+      label: `Limit cut ${limit.order}: resolves in clockwise number order`,
       content: limit.order,
-      icon: markerIconUrl(`limit${limit.order}.png`),
+      icon: markerIconUrl(`attack${limit.order}.png`),
     });
   }
 

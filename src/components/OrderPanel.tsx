@@ -15,7 +15,7 @@ import {
   Wind,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { operationKind } from "../game/operations";
+import { operationDescription, operationKind } from "../game/operations";
 
 interface OrderPanelProps {
   order: string[];
@@ -39,6 +39,7 @@ export function OrderPanel({ order, activeOperation, onActiveOperationChange }: 
       >
         {order.map((item) => {
           const Icon = iconForOperation(item);
+          const description = operationDescription(item);
           const active = activeOperation === item;
           return (
             <li key={item}>
@@ -51,7 +52,12 @@ export function OrderPanel({ order, activeOperation, onActiveOperationChange }: 
                 onClick={() => onActiveOperationChange(item)}
               >
                 <Icon size={15} />
-                <span>{item}</span>
+                <span className="operation-copy">
+                  <span className="operation-label">{item}</span>
+                  {description ? (
+                    <span className="operation-description">{description}</span>
+                  ) : null}
+                </span>
               </button>
             </li>
           );

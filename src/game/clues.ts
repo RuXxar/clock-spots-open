@@ -97,11 +97,11 @@ export function mechanicText(mechanic: Extract<Clue, { kind: "mechanic" }>["mech
     case "healing":
       return "Low HP players must be next to a healer";
     case "hello-world":
-      return "Red bugs must be adjacent to two blue bugs";
+      return "The red bug must have both blue bugs as neighbors";
     case "tower-soak":
       return "Tower players must be supports";
     case "limit-cut":
-      return "Limit cut numbers must increase clockwise";
+      return "Limit cut numbers must form a clockwise 1-2-3-4 loop";
     case "rescue":
       return "Healers must be across from rescue targets";
     case "add-damage":
