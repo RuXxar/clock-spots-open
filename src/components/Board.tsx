@@ -161,6 +161,7 @@ function OperationOverlay({
       <KnockbackVectors puzzle={puzzle} activeKind={activeKind} />
       <LimitCutSequence puzzle={puzzle} board={board} activeKind={activeKind} />
       <BugPairLinks puzzle={puzzle} board={board} activeKind={activeKind} />
+      <RescueLinks puzzle={puzzle} board={board} activeKind={activeKind} />
     </>
   );
 }
@@ -304,6 +305,54 @@ function BugPairLinks({
   );
 }
 
+function RescueLinks({
+  puzzle,
+  board,
+  activeKind,
+}: {
+  puzzle: Puzzle;
+  board: BoardSlots;
+  activeKind: OperationKind;
+}) {
+  if (activeKind !== "rescue" || puzzle.markers.rescueJobs.length === 0) {
+    return null;
+  }
+
+  return (
+    <svg className="mechanic-guide-layer rescue-layer" viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <marker
+          id="rescue-arrow"
+          markerWidth="5"
+          markerHeight="5"
+          refX="4"
+          refY="2.5"
+          orient="auto"
+        >
+          <path d="M0,0 L5,2.5 L0,5 Z" />
+        </marker>
+      </defs>
+      {puzzle.markers.rescueJobs.map((job) => {
+        const targetPosition = positionOfJob(board, job);
+        const healerPosition = offsetPosition(targetPosition, puzzle.rescueOffset);
+        const target = POINTS[targetPosition];
+        const healer = POINTS[healerPosition];
+        return (
+          <line
+            className="rescue-link"
+            key={`rescue-${job}`}
+            markerEnd="url(#rescue-arrow)"
+            x1={target.x}
+            y1={target.y}
+            x2={healer.x}
+            y2={healer.y}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
 function TetherLayer({
   puzzle,
   board,
@@ -433,7 +482,16 @@ function focusedJobsForOperation(
     case "healing":
       return new Set([
         ...puzzle.markers.lowHpJobs,
-        ...puzzle.markers.lowHpJobs.map((job) =>
+        ...puzzle.markers.lowHpJobs.flatMap((job) =>
+          neighborPositionsForBoard(positionOfJob(board, job)).map((position) =>
+            jobAt(board, position),
+          ),
+        ),
+      ]);
+    case "rescue":
+      return new Set([
+        ...puzzle.markers.rescueJobs,
+        ...puzzle.markers.rescueJobs.map((job) =>
           jobAt(board, offsetPosition(positionOfJob(board, job), puzzle.rescueOffset)),
         ),
       ]);
@@ -463,7 +521,19 @@ function focusedPositionsForOperation(
     case "check-clues":
       return new Set(puzzle.clues.map((clue) => clue.position));
     case "healing":
-      return new Set(puzzle.markers.lowHpJobs.map((job) => positionOfJob(board, job)));
+      return new Set(
+        puzzle.markers.lowHpJobs.flatMap((job) => {
+          const position = positionOfJob(board, job);
+          return [position, ...neighborPositionsForBoard(position)];
+        }),
+      );
+    case "rescue":
+      return new Set(
+        puzzle.markers.rescueJobs.flatMap((job) => {
+          const position = positionOfJob(board, job);
+          return [position, offsetPosition(position, puzzle.rescueOffset)];
+        }),
+      );
     case "knockback":
     case "proximity-near":
     case "proximity-far":
@@ -549,6 +619,16 @@ function MarkerStack({ puzzle, job }: { puzzle: Puzzle; job: JobId }) {
       label: "Low HP",
       content: "HP",
       icon: markerIconUrl("green_target.png"),
+    });
+  }
+  const rescueIndex = puzzle.markers.rescueJobs.indexOf(job);
+  if (rescueIndex >= 0) {
+    markers.push({
+      key: "rescue",
+      className: "rescue",
+      label: "Rescue target: needs a healer directly across",
+      content: "R",
+      icon: markerIconUrl(`bind${(rescueIndex % 8) + 1}.png`),
     });
   }
   if (puzzle.markers.redBugJobs.includes(job)) {

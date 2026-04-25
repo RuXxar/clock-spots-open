@@ -93,6 +93,7 @@ export interface PuzzleMarkers {
   vulnJobs: JobId[];
   flareJobs: JobId[];
   lowHpJobs: JobId[];
+  rescueJobs: JobId[];
   redBugJobs: JobId[];
   blueBugJobs: JobId[];
   towerPositions: PositionId[];

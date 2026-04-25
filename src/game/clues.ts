@@ -103,7 +103,7 @@ export function mechanicText(mechanic: Extract<Clue, { kind: "mechanic" }>["mech
     case "limit-cut":
       return "Limit cut numbers must form a clockwise 1-2-3-4 loop";
     case "rescue":
-      return "Healers must be across from rescue targets";
+      return "Rescue targets must have a healer directly across";
     case "add-damage":
       return "Every add must be covered by nearby DPS";
     case "stack":
@@ -221,7 +221,7 @@ function evaluateMechanic(
       return rotations.every((steps) => steps > 0 && steps <= 3);
     }
     case "rescue":
-      return puzzle.markers.lowHpJobs.every((job) => {
+      return puzzle.markers.rescueJobs.every((job) => {
         const position = positionOfJob(board, job);
         const rescuingPosition = offsetPosition(position, puzzle.rescueOffset);
         return JOBS[jobAt(board, rescuingPosition)].role === "healer";

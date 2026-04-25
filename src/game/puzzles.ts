@@ -91,7 +91,7 @@ export function puzzleForDate(dateKey: string): Puzzle {
   const mechanics = rng
     .shuffle(MECHANIC_BY_DIFFICULTY[difficulty])
     .slice(0, mechanicCount(difficulty));
-  const markers = createMarkers(rng, solution, selectedJobs, mechanics);
+  const markers = createMarkers(rng, solution, mechanics);
   const knockback =
     mechanics.includes("vuln-dodge") || mechanics.includes("proximity")
       ? rng.pick<KnockbackDirection>(["north", "south", "east", "west"])
@@ -179,7 +179,6 @@ function selectParty(rng: ReturnType<typeof createRng>): JobId[] {
 function createMarkers(
   rng: ReturnType<typeof createRng>,
   solution: BoardSlots,
-  selectedJobs: JobId[],
   mechanics: Array<Extract<Clue, { kind: "mechanic" }>["mechanic"]>,
 ): PuzzleMarkers {
   const positionJobs = (positions: PositionId[]) => positions.map((position) => solution[position]);
@@ -189,25 +188,23 @@ function createMarkers(
   const nonAdjacentPairs = allPositionPairs().filter(([a, b]) => circularDistance(a, b) > 1);
   const adjacentPairs = allPositionPairs().filter(([a, b]) => circularDistance(a, b) === 1);
   const farPairs = allPositionPairs().filter(([a, b]) => circularDistance(a, b) >= 3);
+  const healingTargetPositions = POSITIONS.filter((position) =>
+    neighborPositions(position).some((neighbor) => JOBS[solution[neighbor]].role === "healer"),
+  );
+  const rescueTargetPositions = POSITIONS.filter(
+    (position) => JOBS[solution[offsetPosition(position, 4)]].role === "healer",
+  );
 
   const markers: PuzzleMarkers = {
     aggroPosition: mechanics.includes("boss-aggro") ? rng.pick(tankPositions) : undefined,
     vulnJobs: mechanics.includes("vuln-dodge") ? positionJobs(rng.pick(nonAdjacentPairs)) : [],
     flareJobs: mechanics.includes("flare-spread") ? positionJobs(rng.pick(nonAdjacentPairs)) : [],
-    lowHpJobs:
-      mechanics.includes("healing") || mechanics.includes("rescue")
-        ? positionJobs(
-            rng
-              .shuffle(
-                POSITIONS.filter((position) =>
-                  neighborPositions(position).some(
-                    (neighbor) => JOBS[solution[neighbor]].role === "healer",
-                  ),
-                ),
-              )
-              .slice(0, 2),
-          )
-        : [],
+    lowHpJobs: mechanics.includes("healing")
+      ? positionJobs(rng.shuffle(healingTargetPositions).slice(0, 2))
+      : [],
+    rescueJobs: mechanics.includes("rescue")
+      ? positionJobs(rng.shuffle(rescueTargetPositions).slice(0, 2))
+      : [],
     redBugJobs: [],
     blueBugJobs: [],
     towerPositions: mechanics.includes("tower-soak")
@@ -263,10 +260,6 @@ function createMarkers(
       .slice(0, 4)
       .sort((a, b) => POSITIONS.indexOf(a) - POSITIONS.indexOf(b))
       .map((position, index) => ({ job: solution[position], order: index + 1 }));
-  }
-
-  if (markers.lowHpJobs.length === 0 && mechanics.includes("rescue")) {
-    markers.lowHpJobs = [rng.pick(selectedJobs)];
   }
 
   return markers;
@@ -327,8 +320,11 @@ function createOrder(
   if (mechanics.includes("hello-world")) {
     order.push("Bug pairs");
   }
-  if (mechanics.includes("healing") || mechanics.includes("rescue")) {
-    order.push("Healing and rescue");
+  if (mechanics.includes("healing")) {
+    order.push("Healing");
+  }
+  if (mechanics.includes("rescue")) {
+    order.push("Rescue");
   }
   order.push("Return to clock spots");
   order.push("All other clues are checked.");
@@ -481,8 +477,9 @@ function mechanicAvailable(
     case "flare-spread":
       return markers.flareJobs.length > 1;
     case "healing":
-    case "rescue":
       return markers.lowHpJobs.length > 0;
+    case "rescue":
+      return markers.rescueJobs.length > 0;
     case "hello-world":
       return markers.redBugJobs.length > 0;
     case "tower-soak":
@@ -640,6 +637,7 @@ function tutorialPuzzle(): Puzzle {
     vulnJobs: ["WAR"],
     flareJobs: [],
     lowHpJobs: ["DNC"],
+    rescueJobs: [],
     redBugJobs: [],
     blueBugJobs: [],
     towerPositions: ["NE"],

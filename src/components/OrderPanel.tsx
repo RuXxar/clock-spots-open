@@ -4,6 +4,7 @@ import {
   ChevronsRight,
   Crosshair,
   Flame,
+  HandHeart,
   HeartPulse,
   Home,
   ListChecks,
@@ -94,6 +95,8 @@ function iconForOperation(label: string): LucideIcon {
       return Bug;
     case "healing":
       return HeartPulse;
+    case "rescue":
+      return HandHeart;
     case "return":
       return Home;
     case "check-clues":

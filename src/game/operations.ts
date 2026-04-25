@@ -12,6 +12,7 @@ export type OperationKind =
   | "stack"
   | "hello-world"
   | "healing"
+  | "rescue"
   | "return"
   | "check-clues"
   | "unknown";
@@ -58,7 +59,10 @@ export function operationKind(label?: string): OperationKind {
   if (lower.includes("bug")) {
     return "hello-world";
   }
-  if (lower.includes("healing") || lower.includes("rescue")) {
+  if (lower.includes("rescue")) {
+    return "rescue";
+  }
+  if (lower.includes("healing")) {
     return "healing";
   }
   if (lower.includes("return")) {
@@ -98,7 +102,9 @@ export function operationDescription(label: string): string | undefined {
     case "hello-world":
       return "The red bug must sit between the two blue bugs.";
     case "healing":
-      return "Low-HP targets need a healer in the required rescue or neighbor spot.";
+      return "Low-HP targets need a healer next to them.";
+    case "rescue":
+      return "Rescue targets are pulled to the healer directly across the arena.";
     case "return":
       return "Mechanic movement ends, then everyone is judged at clock spots.";
     case "check-clues":

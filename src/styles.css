@@ -414,6 +414,19 @@ button.primary,
   filter: drop-shadow(0 0 0.42rem rgba(96, 165, 250, 0.78));
 }
 
+.rescue-layer marker path {
+  fill: #c4b5fd;
+}
+
+.rescue-link {
+  stroke: #c4b5fd;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 4 3;
+  animation: tether-flow 520ms linear infinite;
+  filter: drop-shadow(0 0 0.5rem rgba(196, 181, 253, 0.86));
+}
+
 .center-score {
   position: absolute;
   top: 50%;
@@ -570,6 +583,14 @@ button.primary,
 
 .token-marker.low-hp {
   background: #ef4444;
+}
+
+.token-marker.rescue {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0;
+  background: transparent;
+  filter: drop-shadow(0 1px 0.2rem rgba(0, 0, 0, 0.72));
 }
 
 .token-marker.red-bug {
