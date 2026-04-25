@@ -41,6 +41,8 @@ Recommended deployment target:
 
 Cloudflare Workers serves this Vite+/React app as static assets from `dist`. The `wrangler.toml` file configures Workers Static Assets and SPA fallback routing, and `.node-version` pins Cloudflare's build runtime to Node.js 24.15.0. Do not add a Pages-style `public/_redirects` SPA fallback; Workers handles that through `assets.not_found_handling`.
 
+Pushes to `main` are expected to trigger Cloudflare Workers Builds automatically.
+
 ### Dashboard Deployment
 
 1. Go to Cloudflare Dashboard > Workers & Pages.
