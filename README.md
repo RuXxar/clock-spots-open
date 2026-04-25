@@ -39,7 +39,7 @@ Recommended deployment target:
 - Root directory: leave blank
 - Production branch: `main`
 
-Cloudflare Workers serves this Vite+/React app as static assets from `dist`. The `wrangler.toml` file configures Workers Static Assets and SPA fallback routing, and `.node-version` pins Cloudflare's build runtime to Node.js 24.15.0.
+Cloudflare Workers serves this Vite+/React app as static assets from `dist`. The `wrangler.toml` file configures Workers Static Assets and SPA fallback routing, and `.node-version` pins Cloudflare's build runtime to Node.js 24.15.0. Do not add a Pages-style `public/_redirects` SPA fallback; Workers handles that through `assets.not_found_handling`.
 
 ### Dashboard Deployment
 
