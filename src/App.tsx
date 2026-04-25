@@ -145,6 +145,7 @@ function GamePage({
   const [tutorialStep, setTutorialStep] = useState(0);
   const [tutorialOpen, setTutorialOpen] = useState(dateKey === "tutorial");
   const [recordSaved, setRecordSaved] = useState(false);
+  const [activeOperation, setActiveOperation] = useState<string | undefined>();
   const clueStatuses = evaluateAllClues(puzzle, board);
   const solved = clueStatuses.every(Boolean);
 
@@ -161,6 +162,7 @@ function GamePage({
     setTutorialStep(0);
     setTutorialOpen(dateKey === "tutorial");
     setRecordSaved(false);
+    setActiveOperation(undefined);
   }, [dateKey, puzzle]);
 
   useEffect(() => {
@@ -271,6 +273,7 @@ function GamePage({
           blindProg={blindProg}
           revealedPositions={revealed}
           selectedPosition={selected}
+          activeOperation={activeOperation}
           onReveal={(position) => setRevealed((current) => new Set(current).add(position))}
           onSelect={(position) =>
             setSelected((current) => (current === position ? undefined : position))
@@ -284,7 +287,11 @@ function GamePage({
             setSwaps((value) => value + 1);
           }}
         />
-        <OrderPanel order={puzzle.order} />
+        <OrderPanel
+          order={puzzle.order}
+          activeOperation={activeOperation}
+          onActiveOperationChange={setActiveOperation}
+        />
       </main>
 
       {!started ? (

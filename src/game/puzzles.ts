@@ -303,7 +303,29 @@ function createOrder(
     order.push("Tank buster");
   }
   if (mechanics.includes("proximity")) {
-    order.push("Proximity tethers");
+    order.push("Proximity (near)");
+    order.push("Proximity (far)");
+  }
+  if (mechanics.includes("tethers-no-intersect") || mechanics.includes("tethers-parallel")) {
+    order.push("Orange tethers");
+  }
+  if (mechanics.includes("flare-spread")) {
+    order.push("Flare spread");
+  }
+  if (mechanics.includes("tower-soak")) {
+    order.push("Tower soak");
+  }
+  if (mechanics.includes("limit-cut")) {
+    order.push("Limit cut");
+  }
+  if (mechanics.includes("add-damage")) {
+    order.push("Add damage");
+  }
+  if (mechanics.includes("stack")) {
+    order.push("Stack marker");
+  }
+  if (mechanics.includes("hello-world")) {
+    order.push("Bug pairs");
   }
   if (mechanics.includes("healing") || mechanics.includes("rescue")) {
     order.push("Healing and rescue");
@@ -654,7 +676,7 @@ function tutorialPuzzle(): Puzzle {
     selectedJobs,
     clues,
     markers,
-    order: ["Proximity tethers", "All other clues are checked."],
+    order: ["Proximity (near)", "Proximity (far)", "All other clues are checked."],
     cleaveHits: [],
     rescueOffset: 4,
     solutionCount: 1,
