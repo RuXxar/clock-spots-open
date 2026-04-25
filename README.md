@@ -8,7 +8,7 @@ The board vendors FF14-style job, role, marker, and arena images from the local 
 
 ## Development
 
-Use Node.js 24.15.0. The repo includes `.node-version` and `.nvmrc` so Cloudflare Pages, GitHub Actions, and local version managers can use the same runtime.
+Use Node.js 24.15.0. The repo includes `.node-version` and `.nvmrc` so Cloudflare Workers Builds, GitHub Actions, and local version managers can use the same runtime.
 
 ```bash
 npm ci
@@ -29,24 +29,24 @@ npm run build
 
 The production output is written to `dist`.
 
-## Cloudflare Pages Hosting
+## Cloudflare Workers Hosting
 
 Recommended deployment target:
 
-- Framework preset: `React (Vite)`
 - Build command: `npm run build`
-- Build output directory: `dist`
+- Deploy command: `npx wrangler deploy`
+- Non-production branch deploy command: `npx wrangler versions upload`
 - Root directory: leave blank
 - Production branch: `main`
 
-Cloudflare Pages supports React/Vite-style static output with `npm run build` and `dist`, and the repository includes `wrangler.toml` for Wrangler-based deploys. The `.node-version` file pins Cloudflare's build runtime to Node.js 24.15.0.
+Cloudflare Workers serves this Vite+/React app as static assets from `dist`. The `wrangler.toml` file configures Workers Static Assets and SPA fallback routing, and `.node-version` pins Cloudflare's build runtime to Node.js 24.15.0.
 
 ### Dashboard Deployment
 
 1. Go to Cloudflare Dashboard > Workers & Pages.
-2. Create a new Pages application.
-3. Connect the `RuXxar/clock-spots-open` GitHub repository.
-4. Select the `React (Vite)` preset or enter the build settings above.
+2. Create a new application and connect the `RuXxar/clock-spots-open` GitHub repository.
+3. Keep the project name as `clock-spots-open`.
+4. Enter the build settings above.
 5. Deploy.
 
 ### Wrangler Deployment
