@@ -1,6 +1,6 @@
 import { Sparkles, Zap } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
-import { arenaImageUrl, jobIconUrl, markerIconUrl, roleIconUrl } from "../game/assets";
+import { arenaImageUrl, jobIconUrl, markerIconUrl } from "../game/assets";
 import {
   applyKnockback,
   jobAt,
@@ -126,12 +126,6 @@ export function Board({
               >
                 <MarkerStack puzzle={puzzle} job={job} />
                 <img className="job-icon" src={jobIconUrl(job)} alt="" draggable={false} />
-                <img
-                  className="role-icon"
-                  src={roleIconUrl(JOBS[job].role)}
-                  alt=""
-                  draggable={false}
-                />
                 <span className="job-abbrev">{job}</span>
               </button>
               {clue ? (

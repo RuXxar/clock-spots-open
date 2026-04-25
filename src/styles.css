@@ -476,20 +476,6 @@ button.primary,
   pointer-events: none;
 }
 
-.role-icon {
-  position: absolute;
-  right: -0.35rem;
-  bottom: -0.35rem;
-  z-index: 3;
-  width: 1.35rem;
-  height: 1.35rem;
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  border-radius: 50%;
-  background: rgba(10, 14, 21, 0.78);
-  object-fit: contain;
-  pointer-events: none;
-}
-
 .job-abbrev {
   position: relative;
   z-index: 2;
