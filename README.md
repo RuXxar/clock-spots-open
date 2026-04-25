@@ -43,6 +43,7 @@ Cloudflare Workers serves this Vite+/React app as static assets from `dist`. The
 
 Pushes to `main` are expected to trigger Cloudflare Workers Builds automatically.
 This deployment note can be updated for harmless auto-deploy smoke tests.
+Git integration smoke test marker: connected account verification.
 
 ### Dashboard Deployment
 
