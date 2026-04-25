@@ -10,8 +10,16 @@ import { Stats } from "./components/Stats";
 import { TutorialModal } from "./components/TutorialModal";
 import { countSatisfied, evaluateAllClues } from "./game/clues";
 import { swapSlots } from "./game/board";
+import { operationKind } from "./game/operations";
 import { puzzleForDate, puzzleForToday, todayKey } from "./game/puzzles";
-import type { BoardSlots, DifficultyId, PositionId, SolveRecord } from "./game/types";
+import type {
+  BoardSlots,
+  DifficultyId,
+  JobId,
+  PositionId,
+  Puzzle,
+  SolveRecord,
+} from "./game/types";
 import {
   loadRecords,
   loadSettings,
@@ -290,6 +298,7 @@ function GamePage({
         <OrderPanel
           order={puzzle.order}
           activeOperation={activeOperation}
+          operationDetail={(operation) => operationDetail(operation, puzzle)}
           onActiveOperationChange={setActiveOperation}
         />
       </main>
@@ -340,6 +349,67 @@ function GamePage({
       </footer>
     </div>
   );
+}
+
+function operationDetail(operation: string, puzzle: Puzzle): string | undefined {
+  switch (operationKind(operation)) {
+    case "orange-tethers": {
+      const pairs = puzzle.markers.tethers
+        .filter((tether) => tether.kind === "orange")
+        .map((tether) => `${tether.a}-${tether.b}`);
+      return pairs.length > 0 ? `Pairs: ${pairs.join(", ")}` : undefined;
+    }
+    case "proximity-near": {
+      const pairs = puzzle.markers.tethers
+        .filter((tether) => tether.kind === "near")
+        .map((tether) => `${tether.a}-${tether.b}`);
+      return pairs.length > 0 ? `Near pair: ${pairs.join(", ")}` : undefined;
+    }
+    case "proximity-far": {
+      const pairs = puzzle.markers.tethers
+        .filter((tether) => tether.kind === "far")
+        .map((tether) => `${tether.a}-${tether.b}`);
+      return pairs.length > 0 ? `Far pair: ${pairs.join(", ")}` : undefined;
+    }
+    case "flare-spread":
+      return jobList("Flares", puzzle.markers.flareJobs);
+    case "limit-cut": {
+      const order = [...puzzle.markers.limitCut]
+        .sort((a, b) => a.order - b.order)
+        .map((marker) => `${marker.order}:${marker.job}`);
+      return order.length > 0 ? `Order: ${order.join(" -> ")}` : undefined;
+    }
+    case "hello-world": {
+      const red = jobList("Red", puzzle.markers.redBugJobs);
+      const blue = jobList("Blue", puzzle.markers.blueBugJobs);
+      return [red, blue].filter(Boolean).join(". ") || undefined;
+    }
+    case "healing":
+      return jobList("Low HP", puzzle.markers.lowHpJobs);
+    case "rescue":
+      return jobList("Chain targets", puzzle.markers.rescueJobs);
+    case "add-damage":
+      return puzzle.markers.addPositions.length > 0
+        ? `Adds: ${puzzle.markers.addPositions.join(", ")}`
+        : undefined;
+    case "tower-soak":
+      return puzzle.markers.towerPositions.length > 0
+        ? `Towers: ${puzzle.markers.towerPositions.join(", ")}`
+        : undefined;
+    case "stack":
+      return puzzle.markers.stackJob ? `Stack target: ${puzzle.markers.stackJob}` : undefined;
+    case "tank-buster":
+    case "knockback":
+    case "boss-cleave":
+    case "return":
+    case "check-clues":
+    case "unknown":
+      return undefined;
+  }
+}
+
+function jobList(label: string, jobs: JobId[]): string | undefined {
+  return jobs.length > 0 ? `${label}: ${jobs.join(", ")}` : undefined;
 }
 
 function readLocation() {

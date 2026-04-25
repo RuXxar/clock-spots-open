@@ -84,7 +84,9 @@ export function Board({
         </div>
         {POSITIONS.map((position) => {
           const job = board[position];
-          const clue = puzzle.clues.find((item) => item.position === position);
+          const clue = puzzle.clues.find(
+            (item) => item.position === position && item.kind !== "mechanic",
+          );
           const clueIndex = clue ? puzzle.clues.indexOf(clue) : -1;
           const visible = !blindProg || revealedPositions.has(position);
           const satisfied = clueIndex >= 0 ? clueStatuses[clueIndex] : false;
@@ -319,37 +321,61 @@ function RescueLinks({
   }
 
   return (
-    <svg className="mechanic-guide-layer rescue-layer" viewBox="0 0 100 100" aria-hidden="true">
-      <defs>
-        <marker
-          id="rescue-arrow"
-          markerWidth="5"
-          markerHeight="5"
-          refX="4"
-          refY="2.5"
-          orient="auto"
-        >
-          <path d="M0,0 L5,2.5 L0,5 Z" />
-        </marker>
-      </defs>
-      {puzzle.markers.rescueJobs.map((job) => {
+    <>
+      <svg className="mechanic-guide-layer rescue-layer" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <marker
+            id="rescue-arrow"
+            markerWidth="5"
+            markerHeight="5"
+            refX="4"
+            refY="2.5"
+            orient="auto"
+          >
+            <path d="M0,0 L5,2.5 L0,5 Z" />
+          </marker>
+        </defs>
+        {puzzle.markers.rescueJobs.map((job) => {
+          const targetPosition = positionOfJob(board, job);
+          const healerPosition = offsetPosition(targetPosition, puzzle.rescueOffset);
+          const target = POINTS[targetPosition];
+          const healer = POINTS[healerPosition];
+          return (
+            <line
+              className="rescue-link"
+              key={`rescue-${job}`}
+              markerEnd="url(#rescue-arrow)"
+              x1={target.x}
+              y1={target.y}
+              x2={healer.x}
+              y2={healer.y}
+            />
+          );
+        })}
+      </svg>
+      {puzzle.markers.rescueJobs.flatMap((job) => {
         const targetPosition = positionOfJob(board, job);
         const healerPosition = offsetPosition(targetPosition, puzzle.rescueOffset);
         const target = POINTS[targetPosition];
         const healer = POINTS[healerPosition];
-        return (
-          <line
-            className="rescue-link"
-            key={`rescue-${job}`}
-            markerEnd="url(#rescue-arrow)"
-            x1={target.x}
-            y1={target.y}
-            x2={healer.x}
-            y2={healer.y}
-          />
-        );
+        return [
+          <span
+            className="mechanic-callout rescue-target-callout"
+            key={`rescue-target-${job}`}
+            style={{ left: `${target.x}%`, top: `${target.y}%` }}
+          >
+            Rescue target
+          </span>,
+          <span
+            className="mechanic-callout rescue-healer-callout"
+            key={`rescue-healer-${job}`}
+            style={{ left: `${healer.x}%`, top: `${healer.y}%` }}
+          >
+            Healer across
+          </span>,
+        ];
       })}
-    </svg>
+    </>
   );
 }
 
@@ -626,7 +652,7 @@ function MarkerStack({ puzzle, job }: { puzzle: Puzzle; job: JobId }) {
     markers.push({
       key: "rescue",
       className: "rescue",
-      label: "Rescue target: needs a healer directly across",
+      label: "Rescue target: chain-marked player needs a healer directly across",
       content: "R",
       icon: markerIconUrl(`bind${(rescueIndex % 8) + 1}.png`),
     });

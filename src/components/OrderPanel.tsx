@@ -21,10 +21,16 @@ import { operationDescription, operationKind } from "../game/operations";
 interface OrderPanelProps {
   order: string[];
   activeOperation?: string;
+  operationDetail?(operation: string): string | undefined;
   onActiveOperationChange(operation?: string): void;
 }
 
-export function OrderPanel({ order, activeOperation, onActiveOperationChange }: OrderPanelProps) {
+export function OrderPanel({
+  order,
+  activeOperation,
+  operationDetail,
+  onActiveOperationChange,
+}: OrderPanelProps) {
   return (
     <aside className="order-panel">
       <h2>
@@ -41,6 +47,7 @@ export function OrderPanel({ order, activeOperation, onActiveOperationChange }: 
         {order.map((item) => {
           const Icon = iconForOperation(item);
           const description = operationDescription(item);
+          const detail = operationDetail?.(item);
           const active = activeOperation === item;
           return (
             <li key={item}>
@@ -58,6 +65,7 @@ export function OrderPanel({ order, activeOperation, onActiveOperationChange }: 
                   {description ? (
                     <span className="operation-description">{description}</span>
                   ) : null}
+                  {detail ? <span className="operation-detail">{detail}</span> : null}
                 </span>
               </button>
             </li>

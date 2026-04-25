@@ -427,6 +427,36 @@ button.primary,
   filter: drop-shadow(0 0 0.5rem rgba(196, 181, 253, 0.86));
 }
 
+.mechanic-callout {
+  position: absolute;
+  z-index: 4;
+  max-width: 7.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.46);
+  border-radius: 999px;
+  padding: 0.12rem 0.44rem;
+  background: rgba(5, 8, 15, 0.86);
+  color: #f8fafc;
+  font-size: clamp(0.54rem, 1.35vw, 0.68rem);
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 0.35rem rgba(0, 0, 0, 0.68));
+}
+
+.rescue-target-callout {
+  border-color: rgba(196, 181, 253, 0.75);
+  color: #ede9fe;
+  transform: translate(-50%, -185%);
+}
+
+.rescue-healer-callout {
+  border-color: rgba(134, 239, 172, 0.72);
+  color: #dcfce7;
+  transform: translate(-50%, 95%);
+}
+
 .center-score {
   position: absolute;
   top: 50%;
@@ -703,10 +733,23 @@ button.primary,
   line-height: 1.25;
 }
 
+.operation-detail {
+  color: #cbd5e1;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
 .order-panel li button.active .operation-description,
 .order-panel li button:hover .operation-description,
 .order-panel li button:focus-visible .operation-description {
   color: #d8e1ee;
+}
+
+.order-panel li button.active .operation-detail,
+.order-panel li button:hover .operation-detail,
+.order-panel li button:focus-visible .operation-detail {
+  color: #fff7ed;
 }
 
 .modal-backdrop {

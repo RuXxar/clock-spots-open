@@ -104,7 +104,7 @@ export function operationDescription(label: string): string | undefined {
     case "healing":
       return "Low-HP targets need a healer next to them.";
     case "rescue":
-      return "Rescue targets are pulled to the healer directly across the arena.";
+      return "Chain markers are Rescue targets; each needs a healer directly across the arena.";
     case "return":
       return "Mechanic movement ends, then everyone is judged at clock spots.";
     case "check-clues":

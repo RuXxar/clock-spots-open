@@ -103,7 +103,7 @@ export function mechanicText(mechanic: Extract<Clue, { kind: "mechanic" }>["mech
     case "limit-cut":
       return "Limit cut numbers must form a clockwise 1-2-3-4 loop";
     case "rescue":
-      return "Rescue targets must have a healer directly across";
+      return "Chain-marked Rescue targets must have a healer directly across";
     case "add-damage":
       return "Every add must be covered by nearby DPS";
     case "stack":
