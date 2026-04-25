@@ -316,9 +316,11 @@ function RescueLinks({
   board: BoardSlots;
   activeKind: OperationKind;
 }) {
-  if (activeKind !== "rescue" || puzzle.markers.rescueJobs.length === 0) {
+  if (puzzle.markers.rescueJobs.length === 0) {
     return null;
   }
+
+  const active = activeKind === "rescue";
 
   return (
     <>
@@ -330,7 +332,7 @@ function RescueLinks({
           const healer = POINTS[healerPosition];
           return (
             <line
-              className="rescue-link"
+              className={`rescue-link ${active ? "active" : ""}`}
               key={`rescue-${job}`}
               x1={target.x}
               y1={target.y}
@@ -340,28 +342,30 @@ function RescueLinks({
           );
         })}
       </svg>
-      {puzzle.markers.rescueJobs.flatMap((job) => {
-        const targetPosition = positionOfJob(board, job);
-        const healerPosition = offsetPosition(targetPosition, puzzle.rescueOffset);
-        const target = POINTS[targetPosition];
-        const healer = POINTS[healerPosition];
-        return [
-          <span
-            className="mechanic-callout rescue-target-callout"
-            key={`rescue-target-${job}`}
-            style={{ left: `${target.x}%`, top: `${target.y}%` }}
-          >
-            Rescue target
-          </span>,
-          <span
-            className="mechanic-callout rescue-healer-callout"
-            key={`rescue-healer-${job}`}
-            style={{ left: `${healer.x}%`, top: `${healer.y}%` }}
-          >
-            Healer across
-          </span>,
-        ];
-      })}
+      {active
+        ? puzzle.markers.rescueJobs.flatMap((job) => {
+            const targetPosition = positionOfJob(board, job);
+            const healerPosition = offsetPosition(targetPosition, puzzle.rescueOffset);
+            const target = POINTS[targetPosition];
+            const healer = POINTS[healerPosition];
+            return [
+              <span
+                className="mechanic-callout rescue-target-callout"
+                key={`rescue-target-${job}`}
+                style={{ left: `${target.x}%`, top: `${target.y}%` }}
+              >
+                Rescue target
+              </span>,
+              <span
+                className="mechanic-callout rescue-healer-callout"
+                key={`rescue-healer-${job}`}
+                style={{ left: `${healer.x}%`, top: `${healer.y}%` }}
+              >
+                Healer across
+              </span>,
+            ];
+          })
+        : null}
     </>
   );
 }

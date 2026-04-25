@@ -26,15 +26,14 @@ import type {
 } from "./types";
 import { POSITIONS } from "./types";
 
+type MechanicId = Extract<Clue, { kind: "mechanic" }>["mechanic"];
+
 const FIRST_DAILY = "2026-04-17";
 
 const DIFFICULTIES: DifficultyId[] = ["normal", "extreme", "savage", "ultimate"];
 const puzzleCache = new Map<string, Puzzle>();
 
-const MECHANIC_BY_DIFFICULTY: Record<
-  DifficultyId,
-  Array<Extract<Clue, { kind: "mechanic" }>["mechanic"]>
-> = {
+const MECHANIC_BY_DIFFICULTY: Record<DifficultyId, MechanicId[]> = {
   normal: ["boss-aggro", "stack", "healing"],
   extreme: ["boss-aggro", "vuln-dodge", "proximity", "flare-spread", "stack"],
   savage: [
@@ -107,7 +106,7 @@ export function puzzleForDate(dateKey: string): Puzzle {
     solution,
     selectedJobs,
     markers,
-    order: createOrder(mechanics, Boolean(knockback)),
+    order: [],
     knockback,
     cleaveHits,
     rescueOffset,
@@ -115,8 +114,15 @@ export function puzzleForDate(dateKey: string): Puzzle {
 
   const pool = buildCluePool(rng, puzzleBase);
   const { clues, solutionCount } = chooseClues(rng, puzzleBase, pool, mechanics);
+  const selectedMechanics = mechanicsFromClues(clues);
+  const selectedKnockback = hasKnockbackStep(selectedMechanics) ? knockback : undefined;
+  const selectedMarkers = markersForMechanics(markers, selectedMechanics);
   const puzzleWithSolution: Puzzle = {
     ...puzzleBase,
+    markers: selectedMarkers,
+    order: createOrder(selectedMechanics, Boolean(selectedKnockback)),
+    knockback: selectedKnockback,
+    cleaveHits: selectedMechanics.includes("vuln-dodge") ? cleaveHits : [],
     clues,
     starting: solution,
     solutionCount,
@@ -179,7 +185,7 @@ function selectParty(rng: ReturnType<typeof createRng>): JobId[] {
 function createMarkers(
   rng: ReturnType<typeof createRng>,
   solution: BoardSlots,
-  mechanics: Array<Extract<Clue, { kind: "mechanic" }>["mechanic"]>,
+  mechanics: MechanicId[],
 ): PuzzleMarkers {
   const positionJobs = (positions: PositionId[]) => positions.map((position) => solution[position]);
   const tankPositions = POSITIONS.filter((position) => JOBS[solution[position]].role === "tank");
@@ -281,10 +287,7 @@ function createCleaveHits(
   return positionsInGroup(rng.pick(safeGroups.length > 0 ? safeGroups : groups));
 }
 
-function createOrder(
-  mechanics: Array<Extract<Clue, { kind: "mechanic" }>["mechanic"]>,
-  hasKnockback: boolean,
-): string[] {
+function createOrder(mechanics: MechanicId[], hasKnockback: boolean): string[] {
   const order = [];
   if (hasKnockback) {
     order.push("Knockback");
@@ -329,6 +332,43 @@ function createOrder(
   order.push("Return to clock spots");
   order.push("All other clues are checked.");
   return order;
+}
+
+function mechanicsFromClues(clues: Clue[]): MechanicId[] {
+  const mechanics: MechanicId[] = [];
+  for (const clue of clues) {
+    if (clue.kind === "mechanic" && !mechanics.includes(clue.mechanic)) {
+      mechanics.push(clue.mechanic);
+    }
+  }
+  return mechanics;
+}
+
+function hasKnockbackStep(mechanics: MechanicId[]): boolean {
+  return mechanics.includes("vuln-dodge") || mechanics.includes("proximity");
+}
+
+function markersForMechanics(markers: PuzzleMarkers, mechanics: MechanicId[]): PuzzleMarkers {
+  const selected = new Set(mechanics);
+  const hasOrangeTethers = selected.has("tethers-no-intersect") || selected.has("tethers-parallel");
+  const hasProximity = selected.has("proximity");
+
+  return {
+    aggroPosition: selected.has("boss-aggro") ? markers.aggroPosition : undefined,
+    vulnJobs: selected.has("vuln-dodge") ? markers.vulnJobs : [],
+    flareJobs: selected.has("flare-spread") ? markers.flareJobs : [],
+    lowHpJobs: selected.has("healing") ? markers.lowHpJobs : [],
+    rescueJobs: selected.has("rescue") ? markers.rescueJobs : [],
+    redBugJobs: selected.has("hello-world") ? markers.redBugJobs : [],
+    blueBugJobs: selected.has("hello-world") ? markers.blueBugJobs : [],
+    towerPositions: selected.has("tower-soak") ? markers.towerPositions : [],
+    stackJob: selected.has("stack") ? markers.stackJob : undefined,
+    tethers: markers.tethers.filter((tether) =>
+      tether.kind === "orange" ? hasOrangeTethers : hasProximity,
+    ),
+    limitCut: selected.has("limit-cut") ? markers.limitCut : [],
+    addPositions: selected.has("add-damage") ? markers.addPositions : [],
+  };
 }
 
 function buildCluePool(
@@ -460,7 +500,7 @@ function buildCluePool(
 }
 
 function mechanicAvailable(
-  mechanic: Extract<Clue, { kind: "mechanic" }>["mechanic"],
+  mechanic: MechanicId,
   puzzle: Omit<Puzzle, "clues" | "starting" | "solutionCount">,
 ): boolean {
   const markers = puzzle.markers;
@@ -497,7 +537,7 @@ function chooseClues(
   rng: ReturnType<typeof createRng>,
   puzzle: Omit<Puzzle, "clues" | "starting" | "solutionCount">,
   pool: Clue[],
-  requiredMechanics: Array<Extract<Clue, { kind: "mechanic" }>["mechanic"]>,
+  requiredMechanics: MechanicId[],
 ): { clues: Clue[]; solutionCount: number } {
   const permutations = allBoards(puzzle.selectedJobs);
   const selected: Clue[] = [];

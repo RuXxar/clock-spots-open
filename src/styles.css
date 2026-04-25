@@ -419,6 +419,16 @@ button.primary,
   stroke-width: 1.15;
   stroke-linecap: round;
   stroke-dasharray: 2.2 2.4;
+  opacity: 0.42;
+  transition:
+    opacity 160ms ease,
+    stroke-width 160ms ease;
+  filter: drop-shadow(0 0 0.2rem rgba(94, 231, 166, 0.42));
+}
+
+.rescue-link.active {
+  stroke-width: 1.35;
+  opacity: 1;
   animation: tether-flow 680ms linear infinite;
   filter: drop-shadow(0 0 0.34rem rgba(94, 231, 166, 0.78));
 }
