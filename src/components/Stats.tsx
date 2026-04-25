@@ -9,10 +9,11 @@ import { clearRecords, exportStatsCode, importStatsCode } from "../storage/local
 interface StatsProps {
   records: SolveRecord[];
   onNavigate(path: string): void;
+  onArchive(): void;
   onRecordsChanged(): void;
 }
 
-export function Stats({ records, onNavigate, onRecordsChanged }: StatsProps) {
+export function Stats({ records, onNavigate, onArchive, onRecordsChanged }: StatsProps) {
   const [backupCode, setBackupCode] = useState("");
   const [message, setMessage] = useState("");
   const solved = records.filter((record) => record.solved);
@@ -46,7 +47,7 @@ export function Stats({ records, onNavigate, onRecordsChanged }: StatsProps) {
           Today
         </button>
         <h1>Stats</h1>
-        <button type="button" onClick={() => onNavigate("/archive")}>
+        <button type="button" onClick={onArchive}>
           Archive
         </button>
       </div>

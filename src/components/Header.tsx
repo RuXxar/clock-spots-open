@@ -15,6 +15,7 @@ interface HeaderProps {
   swaps: number;
   easyMode: boolean;
   onNavigate(path: string): void;
+  onArchive(): void;
   onReset(): void;
   onToggleEasy(): void;
   onTutorial(): void;
@@ -27,6 +28,7 @@ export function Header({
   swaps,
   easyMode,
   onNavigate,
+  onArchive,
   onReset,
   onToggleEasy,
   onTutorial,
@@ -40,7 +42,7 @@ export function Header({
         </button>
         <h1>Clock Spots Open</h1>
         <div className="nav-actions">
-          <button className="link-button" type="button" onClick={() => onNavigate("/archive")}>
+          <button className="link-button" type="button" onClick={onArchive}>
             <CalendarDays size={15} />
             Archive
           </button>

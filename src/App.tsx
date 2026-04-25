@@ -31,6 +31,7 @@ export function App() {
   const [location, setLocation] = useState(() => readLocation());
   const [records, setRecords] = useState<SolveRecord[]>(() => loadRecords());
   const [settings, setSettings] = useState<Settings>(() => loadSettings());
+  const [archiveOpen, setArchiveOpen] = useState(() => window.location.pathname === "/archive");
 
   useEffect(() => {
     const handlePop = () => setLocation(readLocation());
@@ -38,42 +39,76 @@ export function App() {
     return () => window.removeEventListener("popstate", handlePop);
   }, []);
 
-  const navigate = (path: string, search?: URLSearchParams) => {
+  useEffect(() => {
+    if (location.pathname === "/archive") {
+      setArchiveOpen(true);
+    }
+  }, [location.pathname]);
+
+  const navigate = (path: string, search?: URLSearchParams, replace = false) => {
+    if (path === "/archive") {
+      setArchiveOpen(true);
+      return;
+    }
     const query = search?.toString();
     const url = `${path}${query ? `?${query}` : ""}`;
-    window.history.pushState(null, "", url);
+    if (replace) {
+      window.history.replaceState(null, "", url);
+    } else {
+      window.history.pushState(null, "", url);
+    }
+    setArchiveOpen(false);
     setLocation(readLocation());
   };
 
-  if (location.pathname === "/archive") {
-    return <Archive onNavigate={navigate} />;
-  }
+  const openArchive = () => setArchiveOpen(true);
+  const closeArchive = () => {
+    setArchiveOpen(false);
+    if (location.pathname === "/archive") {
+      navigate("/", undefined, true);
+    }
+  };
+
+  const archiveDrawer = <Archive open={archiveOpen} onClose={closeArchive} onNavigate={navigate} />;
 
   if (location.pathname === "/stats") {
     return (
-      <Stats
-        records={records}
-        onNavigate={navigate}
-        onRecordsChanged={() => setRecords(loadRecords())}
-      />
+      <>
+        <Stats
+          records={records}
+          onNavigate={navigate}
+          onArchive={openArchive}
+          onRecordsChanged={() => setRecords(loadRecords())}
+        />
+        {archiveDrawer}
+      </>
     );
   }
 
   if (location.pathname === "/privacy") {
-    return <Privacy onNavigate={navigate} />;
+    return (
+      <>
+        <Privacy onNavigate={navigate} />
+        {archiveDrawer}
+      </>
+    );
   }
 
   return (
-    <GamePage
-      dateKey={location.search.get("date") ?? todayKey()}
-      settings={settings}
-      onRecordsChanged={() => setRecords(loadRecords())}
-      onSettingsChanged={(next) => {
-        setSettings(next);
-        saveSettings(next);
-      }}
-      onNavigate={navigate}
-    />
+    <>
+      <GamePage
+        dateKey={location.search.get("date") ?? todayKey()}
+        settings={settings}
+        onRecordsChanged={() => setRecords(loadRecords())}
+        onSettingsChanged={(next) => {
+          setSettings(next);
+          saveSettings(next);
+        }}
+        onNavigate={navigate}
+        onArchive={openArchive}
+      />
+      {archiveDrawer}
+    </>
   );
 }
 
@@ -83,6 +118,7 @@ interface GamePageProps {
   onRecordsChanged(): void;
   onSettingsChanged(settings: Settings): void;
   onNavigate(path: string, search?: URLSearchParams): void;
+  onArchive(): void;
 }
 
 function GamePage({
@@ -91,6 +127,7 @@ function GamePage({
   onRecordsChanged,
   onSettingsChanged,
   onNavigate,
+  onArchive,
 }: GamePageProps) {
   const puzzle = useMemo(
     () => (dateKey === todayKey() ? puzzleForToday() : puzzleForDate(dateKey)),
@@ -203,6 +240,7 @@ function GamePage({
         swaps={swaps}
         easyMode={settings.easyMode}
         onNavigate={onNavigate}
+        onArchive={onArchive}
         onReset={() => reset(true)}
         onToggleEasy={() => onSettingsChanged({ ...settings, easyMode: !settings.easyMode })}
         onTutorial={() => {

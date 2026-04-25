@@ -35,6 +35,7 @@ body,
 
 body {
   min-width: 320px;
+  overflow-x: hidden;
   background:
     linear-gradient(180deg, rgba(20, 28, 39, 0.96), rgba(7, 10, 15, 0.98)),
     repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 24px);
@@ -566,6 +567,126 @@ button.primary,
   position: absolute;
   top: 0.55rem;
   right: 0.55rem;
+}
+
+.drawer-backdrop {
+  position: fixed;
+  z-index: 32;
+  inset: 0;
+  overflow: hidden;
+  background: rgba(5, 7, 12, 0.48);
+  animation: backdrop-in 160ms ease;
+}
+
+.archive-drawer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background:
+    linear-gradient(180deg, rgba(20, 28, 39, 0.98), rgba(9, 13, 20, 0.99)), var(--surface);
+  padding: clamp(0.75rem, 4vw, 1rem);
+  animation: drawer-in 180ms ease;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.drawer-header span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.drawer-header h1 {
+  margin: 0.15rem 0 0;
+  color: var(--gold);
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  letter-spacing: 0;
+}
+
+.drawer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.archive-drawer .calendar-toolbar {
+  margin-top: 0.2rem;
+}
+
+.archive-drawer .calendar-toolbar strong {
+  min-width: 0;
+  flex: 1;
+}
+
+.archive-drawer .calendar-grid {
+  gap: clamp(0.18rem, 1.2vw, 0.35rem);
+}
+
+.archive-drawer .empty-day,
+.archive-drawer .day-tile {
+  min-height: 4.35rem;
+}
+
+.archive-drawer .day-tile {
+  padding-inline: 0.18rem;
+}
+
+.archive-drawer .day-tile strong {
+  font-size: clamp(0.95rem, 6vw, 1.2rem);
+}
+
+.archive-drawer .day-tile span {
+  overflow-wrap: anywhere;
+  font-size: clamp(0.56rem, 3vw, 0.74rem);
+  line-height: 1.05;
+}
+
+.tile-label-short {
+  display: none;
+  text-transform: uppercase;
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@media (min-width: 681px) {
+  .archive-drawer {
+    inset: 0 0 0 auto;
+    width: min(92vw, 640px);
+    border-left: 1px solid rgba(123, 139, 165, 0.32);
+    box-shadow: -24px 0 80px rgba(0, 0, 0, 0.42);
+  }
+}
+
+@media (max-width: 480px) {
+  .tile-label-full {
+    display: none;
+  }
+
+  .tile-label-short {
+    display: inline;
+  }
 }
 
 .start-panel {
