@@ -1,10 +1,10 @@
-import { Clipboard, Home, Import, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { formatTime } from './Header';
-import { archiveDatesThroughToday, puzzleForDate } from '../game/puzzles';
-import { JOBS } from '../game/jobs';
-import type { SolveRecord } from '../game/types';
-import { clearRecords, exportStatsCode, importStatsCode } from '../storage/localStats';
+import { Clipboard, Home, Import, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { formatTime } from "./Header";
+import { archiveDatesThroughToday, puzzleForDate } from "../game/puzzles";
+import { JOBS } from "../game/jobs";
+import type { SolveRecord } from "../game/types";
+import { clearRecords, exportStatsCode, importStatsCode } from "../storage/localStats";
 
 interface StatsProps {
   records: SolveRecord[];
@@ -13,17 +13,27 @@ interface StatsProps {
 }
 
 export function Stats({ records, onNavigate, onRecordsChanged }: StatsProps) {
-  const [backupCode, setBackupCode] = useState('');
-  const [message, setMessage] = useState('');
+  const [backupCode, setBackupCode] = useState("");
+  const [message, setMessage] = useState("");
   const solved = records.filter((record) => record.solved);
-  const catalog = useMemo(() => archiveDatesThroughToday().map((dateKey) => puzzleForDate(dateKey)), []);
+  const catalog = useMemo(
+    () => archiveDatesThroughToday().map((dateKey) => puzzleForDate(dateKey)),
+    [],
+  );
   const fastest = solved.reduce<SolveRecord | undefined>(
     (best, record) => (!best || record.elapsedSeconds < best.elapsedSeconds ? record : best),
     undefined,
   );
-  const fewest = solved.reduce<SolveRecord | undefined>((best, record) => (!best || record.swaps < best.swaps ? record : best), undefined);
-  const avgTime = solved.length ? Math.round(solved.reduce((total, record) => total + record.elapsedSeconds, 0) / solved.length) : 0;
-  const avgSwaps = solved.length ? solved.reduce((total, record) => total + record.swaps, 0) / solved.length : 0;
+  const fewest = solved.reduce<SolveRecord | undefined>(
+    (best, record) => (!best || record.swaps < best.swaps ? record : best),
+    undefined,
+  );
+  const avgTime = solved.length
+    ? Math.round(solved.reduce((total, record) => total + record.elapsedSeconds, 0) / solved.length)
+    : 0;
+  const avgSwaps = solved.length
+    ? solved.reduce((total, record) => total + record.swaps, 0) / solved.length
+    : 0;
   const featured = mostFeaturedJobs(catalog);
   const commonMechanics = mostCommonMechanics(catalog);
   const difficultyCounts = countBy(catalog.map((puzzle) => puzzle.difficulty));
@@ -31,12 +41,12 @@ export function Stats({ records, onNavigate, onRecordsChanged }: StatsProps) {
   return (
     <main className="page-view stats-view">
       <div className="page-header">
-        <button type="button" onClick={() => onNavigate('/')}>
+        <button type="button" onClick={() => onNavigate("/")}>
           <Home size={16} />
           Today
         </button>
         <h1>Stats</h1>
-        <button type="button" onClick={() => onNavigate('/archive')}>
+        <button type="button" onClick={() => onNavigate("/archive")}>
           Archive
         </button>
       </div>
@@ -51,8 +61,11 @@ export function Stats({ records, onNavigate, onRecordsChanged }: StatsProps) {
             <Metric label="Average time" value={formatTime(avgTime)} />
             <Metric label="Average swaps" value={avgSwaps.toFixed(1)} />
             <Metric label="Best streak" value={String(bestStreak(solved))} />
-            <Metric label="Fastest solve" value={fastest ? formatTime(fastest.elapsedSeconds) : '-'} />
-            <Metric label="Fewest swaps" value={fewest ? String(fewest.swaps) : '-'} />
+            <Metric
+              label="Fastest solve"
+              value={fastest ? formatTime(fastest.elapsedSeconds) : "-"}
+            />
+            <Metric label="Fewest swaps" value={fewest ? String(fewest.swaps) : "-"} />
           </div>
         )}
       </section>
@@ -121,7 +134,7 @@ export function Stats({ records, onNavigate, onRecordsChanged }: StatsProps) {
               const code = exportStatsCode();
               setBackupCode(code);
               await navigator.clipboard?.writeText(code).catch(() => undefined);
-              setMessage('Backup code generated.');
+              setMessage("Backup code generated.");
             }}
           >
             <Clipboard size={16} />
@@ -135,7 +148,7 @@ export function Stats({ records, onNavigate, onRecordsChanged }: StatsProps) {
                 onRecordsChanged();
                 setMessage(`Imported ${result.added} new and ${result.updated} updated records.`);
               } catch (error) {
-                setMessage(error instanceof Error ? error.message : 'Import failed.');
+                setMessage(error instanceof Error ? error.message : "Import failed.");
               }
             }}
           >
@@ -147,7 +160,7 @@ export function Stats({ records, onNavigate, onRecordsChanged }: StatsProps) {
             onClick={() => {
               clearRecords();
               onRecordsChanged();
-              setMessage('Local records cleared.');
+              setMessage("Local records cleared.");
             }}
           >
             <Trash2 size={16} />
@@ -185,10 +198,12 @@ function bestStreak(records: SolveRecord[]): number {
   const dates = [...new Set(records.map((record) => record.dateKey))].sort();
   let best = 0;
   let current = 0;
-  let previous = '';
+  let previous = "";
 
   for (const date of dates) {
-    const gap = previous ? (Date.parse(`${date}T00:00:00Z`) - Date.parse(`${previous}T00:00:00Z`)) / 86_400_000 : 1;
+    const gap = previous
+      ? (Date.parse(`${date}T00:00:00Z`) - Date.parse(`${previous}T00:00:00Z`)) / 86_400_000
+      : 1;
     current = gap === 1 ? current + 1 : 1;
     best = Math.max(best, current);
     previous = date;
@@ -197,7 +212,9 @@ function bestStreak(records: SolveRecord[]): number {
   return best;
 }
 
-function mostFeaturedJobs(catalog: ReturnType<typeof puzzleForDate>[]): Array<[keyof typeof JOBS, number]> {
+function mostFeaturedJobs(
+  catalog: ReturnType<typeof puzzleForDate>[],
+): Array<[keyof typeof JOBS, number]> {
   const counts = new Map<keyof typeof JOBS, number>();
   for (const puzzle of catalog) {
     for (const job of puzzle.selectedJobs) {
@@ -211,8 +228,8 @@ function mostCommonMechanics(catalog: ReturnType<typeof puzzleForDate>[]): Array
   const counts = new Map<string, number>();
   for (const puzzle of catalog) {
     for (const clue of puzzle.clues) {
-      if (clue.kind === 'mechanic') {
-        const label = clue.mechanic.replaceAll('-', ' ');
+      if (clue.kind === "mechanic") {
+        const label = clue.mechanic.replaceAll("-", " ");
         counts.set(label, (counts.get(label) ?? 0) + 1);
       }
     }

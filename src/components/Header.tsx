@@ -1,11 +1,11 @@
-import { BarChart3, CalendarDays, HelpCircle, Home, RotateCcw, Star } from 'lucide-react';
-import type { DifficultyId } from '../game/types';
+import { BarChart3, CalendarDays, HelpCircle, Home, RotateCcw, Star } from "lucide-react";
+import type { DifficultyId } from "../game/types";
 
 const DIFFICULTY_LABEL: Record<DifficultyId, string> = {
-  normal: 'Normal',
-  extreme: 'Extreme',
-  savage: 'Savage',
-  ultimate: 'Ultimate',
+  normal: "Normal",
+  extreme: "Extreme",
+  savage: "Savage",
+  ultimate: "Ultimate",
 };
 
 interface HeaderProps {
@@ -34,17 +34,17 @@ export function Header({
   return (
     <header className="site-header">
       <div className="nav-line">
-        <button className="link-button" type="button" onClick={() => onNavigate('/')}>
+        <button className="link-button" type="button" onClick={() => onNavigate("/")}>
           <Home size={15} />
           Today
         </button>
         <h1>Clock Spots Open</h1>
         <div className="nav-actions">
-          <button className="link-button" type="button" onClick={() => onNavigate('/archive')}>
+          <button className="link-button" type="button" onClick={() => onNavigate("/archive")}>
             <CalendarDays size={15} />
             Archive
           </button>
-          <button className="link-button" type="button" onClick={() => onNavigate('/stats')}>
+          <button className="link-button" type="button" onClick={() => onNavigate("/stats")}>
             <BarChart3 size={15} />
             Stats
           </button>
@@ -57,7 +57,7 @@ export function Header({
         <span>{swaps} swaps</span>
       </div>
       <div className="toolbar">
-        <button className={easyMode ? 'active' : ''} type="button" onClick={onToggleEasy}>
+        <button className={easyMode ? "active" : ""} type="button" onClick={onToggleEasy}>
           <Star size={16} />
           Easy Mode
         </button>
@@ -77,5 +77,5 @@ export function Header({
 export function formatTime(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  return `${minutes}:${String(seconds).padStart(2, '0')}`;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }

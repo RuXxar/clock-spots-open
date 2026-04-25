@@ -1,6 +1,6 @@
-import { Clipboard, RotateCcw, Share2, X } from 'lucide-react';
-import { formatTime } from './Header';
-import type { DifficultyId } from '../game/types';
+import { Clipboard, RotateCcw, Share2, X } from "lucide-react";
+import { formatTime } from "./Header";
+import type { DifficultyId } from "../game/types";
 
 interface ShareDialogProps {
   open: boolean;
@@ -50,11 +50,11 @@ export function ShareDialog({
           <strong>{swaps} swaps</strong>
         </div>
         <p className="muted">
-          {easyMode ? 'Easy Mode' : 'Classic'} {blindProg ? 'with Blind Prog' : ''}
+          {easyMode ? "Easy Mode" : "Classic"} {blindProg ? "with Blind Prog" : ""}
         </p>
         <button className="primary" type="button" onClick={onCopy}>
           <Clipboard size={17} />
-          {copied ? 'Copied' : 'Copy Result'}
+          {copied ? "Copied" : "Copy Result"}
         </button>
         <button type="button" onClick={onPlayAgain}>
           <RotateCcw size={17} />

@@ -1,4 +1,4 @@
-import { EyeOff, GraduationCap, Play } from 'lucide-react';
+import { EyeOff, GraduationCap, Play } from "lucide-react";
 
 interface StartDialogProps {
   dateLabel: string;
@@ -8,10 +8,21 @@ interface StartDialogProps {
   onTutorial(): void;
 }
 
-export function StartDialog({ dateLabel, difficultyLabel, onStart, onBlind, onTutorial }: StartDialogProps) {
+export function StartDialog({
+  dateLabel,
+  difficultyLabel,
+  onStart,
+  onBlind,
+  onTutorial,
+}: StartDialogProps) {
   return (
     <div className="modal-backdrop">
-      <div className="modal-panel start-panel" role="dialog" aria-modal="true" aria-labelledby="start-title">
+      <div
+        className="modal-panel start-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="start-title"
+      >
         <h2 id="start-title">Clock Spots Open</h2>
         <p>{dateLabel}</p>
         <p className="difficulty-text">{difficultyLabel}</p>

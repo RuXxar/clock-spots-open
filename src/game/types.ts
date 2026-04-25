@@ -1,70 +1,77 @@
-export const POSITIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
+export const POSITIONS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] as const;
 
 export type PositionId = (typeof POSITIONS)[number];
 
-export type Role = 'tank' | 'healer' | 'dps';
-export type DamageRole = 'melee' | 'physical-ranged' | 'caster';
+export type Role = "tank" | "healer" | "dps";
+export type DamageRole = "melee" | "physical-ranged" | "caster";
 
 export type JobId =
-  | 'PLD'
-  | 'WAR'
-  | 'DRK'
-  | 'GNB'
-  | 'WHM'
-  | 'SCH'
-  | 'AST'
-  | 'SGE'
-  | 'MNK'
-  | 'DRG'
-  | 'NIN'
-  | 'SAM'
-  | 'RPR'
-  | 'VPR'
-  | 'BRD'
-  | 'MCH'
-  | 'DNC'
-  | 'BLM'
-  | 'SMN'
-  | 'RDM'
-  | 'PCT';
+  | "PLD"
+  | "WAR"
+  | "DRK"
+  | "GNB"
+  | "WHM"
+  | "SCH"
+  | "AST"
+  | "SGE"
+  | "MNK"
+  | "DRG"
+  | "NIN"
+  | "SAM"
+  | "RPR"
+  | "VPR"
+  | "BRD"
+  | "MCH"
+  | "DNC"
+  | "BLM"
+  | "SMN"
+  | "RDM"
+  | "PCT";
 
 export type TagId =
   | Role
   | DamageRole
-  | 'support'
-  | 'ranged'
-  | 'magic'
-  | 'shield'
-  | 'sword'
-  | 'gun'
-  | 'book'
-  | 'dual-wield'
-  | 'cast-bar'
-  | 'raid-buff'
-  | 'backstep'
-  | 'auto-crit'
-  | 'fire-action'
-  | 'dawntrail'
-  | 'barrier-healer'
-  | 'regen-healer'
-  | 'aiming-accessories'
-  | 'gridania'
-  | 'limsa'
-  | 'uldah'
-  | 'ishgard';
+  | "support"
+  | "ranged"
+  | "magic"
+  | "shield"
+  | "sword"
+  | "gun"
+  | "book"
+  | "dual-wield"
+  | "cast-bar"
+  | "raid-buff"
+  | "backstep"
+  | "auto-crit"
+  | "fire-action"
+  | "dawntrail"
+  | "barrier-healer"
+  | "regen-healer"
+  | "aiming-accessories"
+  | "gridania"
+  | "limsa"
+  | "uldah"
+  | "ishgard";
 
-export type DifficultyId = 'normal' | 'extreme' | 'savage' | 'ultimate';
+export type DifficultyId = "normal" | "extreme" | "savage" | "ultimate";
 
-export type PositionGroup = 'all' | 'cardinal' | 'intercardinal' | 'north' | 'south' | 'east' | 'west';
+export type PositionGroup =
+  | "all"
+  | "cardinal"
+  | "intercardinal"
+  | "north"
+  | "south"
+  | "east"
+  | "west";
 
-export type KnockbackDirection = 'north' | 'south' | 'east' | 'west';
+export type KnockbackDirection = "north" | "south" | "east" | "west";
 
 export interface JobDefinition {
   id: JobId;
   name: string;
   role: Role;
   damageRole?: DamageRole;
-  color: 'blue' | 'green' | 'red';
+  color: "blue" | "green" | "red";
   tags: TagId[];
 }
 
@@ -73,7 +80,7 @@ export type BoardSlots = Record<PositionId, JobId>;
 export interface TetherMarker {
   a: JobId;
   b: JobId;
-  kind: 'near' | 'far' | 'orange';
+  kind: "near" | "far" | "orange";
 }
 
 export interface LimitCutMarker {
@@ -98,14 +105,14 @@ export interface PuzzleMarkers {
 export type Clue =
   | {
       id: string;
-      kind: 'self-tag';
+      kind: "self-tag";
       position: PositionId;
       tag: TagId;
       positive: boolean;
     }
   | {
       id: string;
-      kind: 'relative-tag';
+      kind: "relative-tag";
       position: PositionId;
       offset: number;
       tag: TagId;
@@ -113,38 +120,38 @@ export type Clue =
     }
   | {
       id: string;
-      kind: 'neighbor-tag';
+      kind: "neighbor-tag";
       position: PositionId;
-      mode: 'both' | 'neither' | 'either';
+      mode: "both" | "neither" | "either";
       tag: TagId;
     }
   | {
       id: string;
-      kind: 'group-count';
+      kind: "group-count";
       position: PositionId;
       group: PositionGroup;
       tag: TagId;
       count: number;
-      comparator: 'exactly' | 'at-least' | 'at-most';
+      comparator: "exactly" | "at-least" | "at-most";
     }
   | {
       id: string;
-      kind: 'mechanic';
+      kind: "mechanic";
       position: PositionId;
       mechanic:
-        | 'boss-aggro'
-        | 'vuln-dodge'
-        | 'proximity'
-        | 'tethers-no-intersect'
-        | 'tethers-parallel'
-        | 'flare-spread'
-        | 'healing'
-        | 'hello-world'
-        | 'tower-soak'
-        | 'limit-cut'
-        | 'rescue'
-        | 'add-damage'
-        | 'stack';
+        | "boss-aggro"
+        | "vuln-dodge"
+        | "proximity"
+        | "tethers-no-intersect"
+        | "tethers-parallel"
+        | "flare-spread"
+        | "healing"
+        | "hello-world"
+        | "tower-soak"
+        | "limit-cut"
+        | "rescue"
+        | "add-damage"
+        | "stack";
     };
 
 export interface Puzzle {

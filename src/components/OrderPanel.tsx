@@ -1,4 +1,4 @@
-import { CheckCircle2, ListChecks } from 'lucide-react';
+import { CheckCircle2, ListChecks } from "lucide-react";
 
 export function OrderPanel({ order }: { order: string[] }) {
   return (

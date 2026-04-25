@@ -1,11 +1,11 @@
-import { Sparkles, Zap } from 'lucide-react';
-import type { CSSProperties, ReactNode } from 'react';
-import { arenaImageUrl, jobIconUrl, markerIconUrl, roleIconUrl } from '../game/assets';
-import { clueMechanicLabel, clueText } from '../game/clues';
-import { positionOfJob } from '../game/board';
-import { JOBS } from '../game/jobs';
-import type { BoardSlots, JobId, PositionId, Puzzle } from '../game/types';
-import { POSITIONS } from '../game/types';
+import { Sparkles, Zap } from "lucide-react";
+import type { CSSProperties, ReactNode } from "react";
+import { arenaImageUrl, jobIconUrl, markerIconUrl, roleIconUrl } from "../game/assets";
+import { clueMechanicLabel, clueText } from "../game/clues";
+import { positionOfJob } from "../game/board";
+import { JOBS } from "../game/jobs";
+import type { BoardSlots, JobId, PositionId, Puzzle } from "../game/types";
+import { POSITIONS } from "../game/types";
 
 const POINTS: Record<PositionId, { x: number; y: number }> = {
   N: { x: 50, y: 11 },
@@ -54,7 +54,10 @@ export function Board({
 
   return (
     <section className="board-shell" aria-label="Clock spots board">
-      <div className="arena-board" style={{ '--arena-image': `url("${arenaImageUrl()}")` } as CSSProperties}>
+      <div
+        className="arena-board"
+        style={{ "--arena-image": `url("${arenaImageUrl()}")` } as CSSProperties}
+      >
         <div className="arena-grid" aria-hidden="true" />
         <TetherLayer puzzle={puzzle} board={board} />
         <FixedMarkers puzzle={puzzle} />
@@ -79,7 +82,7 @@ export function Board({
               onDragOver={(event) => event.preventDefault()}
               onDrop={(event) => {
                 event.preventDefault();
-                const source = event.dataTransfer.getData('text/clock-position') as PositionId;
+                const source = event.dataTransfer.getData("text/clock-position") as PositionId;
                 if (source && source !== position) {
                   onReveal(position);
                   onSwap(source, position);
@@ -87,29 +90,34 @@ export function Board({
               }}
             >
               <button
-                className={`job-token ${JOBS[job].color} ${selectedPosition === position ? 'selected' : ''}`}
+                className={`job-token ${JOBS[job].color} ${selectedPosition === position ? "selected" : ""}`}
                 type="button"
                 draggable
                 onDragStart={(event) => {
-                  event.dataTransfer.setData('text/clock-position', position);
-                  event.dataTransfer.effectAllowed = 'move';
+                  event.dataTransfer.setData("text/clock-position", position);
+                  event.dataTransfer.effectAllowed = "move";
                 }}
                 onClick={() => handleClick(position)}
                 title={`${JOBS[job].name} at ${position}`}
               >
                 <MarkerStack puzzle={puzzle} job={job} />
                 <img className="job-icon" src={jobIconUrl(job)} alt="" draggable={false} />
-                <img className="role-icon" src={roleIconUrl(JOBS[job].role)} alt="" draggable={false} />
+                <img
+                  className="role-icon"
+                  src={roleIconUrl(JOBS[job].role)}
+                  alt=""
+                  draggable={false}
+                />
                 <span className="job-abbrev">{job}</span>
               </button>
               {clue ? (
                 <p
-                  className={`slot-clue ${easyMode ? (satisfied ? 'satisfied' : 'unsatisfied') : ''} ${
-                    visible ? '' : 'hidden-clue'
+                  className={`slot-clue ${easyMode ? (satisfied ? "satisfied" : "unsatisfied") : ""} ${
+                    visible ? "" : "hidden-clue"
                   }`}
                   title={clueMechanicLabel(clue)}
                 >
-                  {visible ? `"${clueText(clue)}"` : '???'}
+                  {visible ? `"${clueText(clue)}"` : "???"}
                 </p>
               ) : null}
             </div>
@@ -155,7 +163,7 @@ function FixedMarkers({ puzzle }: { puzzle: Puzzle }) {
           style={{ left: `${POINTS[position].x}%`, top: `${POINTS[position].y}%` }}
           title="Add"
         >
-          <img src={markerIconUrl('crosshairs.png')} alt="" draggable={false} />
+          <img src={markerIconUrl("crosshairs.png")} alt="" draggable={false} />
         </div>
       ))}
       {puzzle.markers.towerPositions.map((position) => (
@@ -165,7 +173,7 @@ function FixedMarkers({ puzzle }: { puzzle: Puzzle }) {
           style={{ left: `${POINTS[position].x}%`, top: `${POINTS[position].y}%` }}
           title="Tower"
         >
-          <img src={markerIconUrl('waymark_1.png')} alt="" draggable={false} />
+          <img src={markerIconUrl("waymark_1.png")} alt="" draggable={false} />
         </div>
       ))}
       {puzzle.markers.aggroPosition ? (
@@ -177,7 +185,7 @@ function FixedMarkers({ puzzle }: { puzzle: Puzzle }) {
           }}
           title="Boss aggro"
         >
-          <img src={markerIconUrl('attack1.png')} alt="" draggable={false} />
+          <img src={markerIconUrl("attack1.png")} alt="" draggable={false} />
         </div>
       ) : null}
     </>
@@ -185,32 +193,74 @@ function FixedMarkers({ puzzle }: { puzzle: Puzzle }) {
 }
 
 function MarkerStack({ puzzle, job }: { puzzle: Puzzle; job: JobId }) {
-  const markers: Array<{ key: string; className: string; label: string; content: ReactNode; icon?: string }> = [];
+  const markers: Array<{
+    key: string;
+    className: string;
+    label: string;
+    content: ReactNode;
+    icon?: string;
+  }> = [];
 
   if (puzzle.markers.vulnJobs.includes(job)) {
-    markers.push({ key: 'vuln', className: 'vuln', label: 'Vulnerability Up', content: <Zap size={13} />, icon: markerIconUrl('red_target.png') });
+    markers.push({
+      key: "vuln",
+      className: "vuln",
+      label: "Vulnerability Up",
+      content: <Zap size={13} />,
+      icon: markerIconUrl("red_target.png"),
+    });
   }
   if (puzzle.markers.flareJobs.includes(job)) {
-    markers.push({ key: 'flare', className: 'flare', label: 'Flare', content: <Sparkles size={13} />, icon: markerIconUrl('crosshairs.png') });
+    markers.push({
+      key: "flare",
+      className: "flare",
+      label: "Flare",
+      content: <Sparkles size={13} />,
+      icon: markerIconUrl("crosshairs.png"),
+    });
   }
   if (puzzle.markers.lowHpJobs.includes(job)) {
-    markers.push({ key: 'low-hp', className: 'low-hp', label: 'Low HP', content: 'HP', icon: markerIconUrl('green_target.png') });
+    markers.push({
+      key: "low-hp",
+      className: "low-hp",
+      label: "Low HP",
+      content: "HP",
+      icon: markerIconUrl("green_target.png"),
+    });
   }
   if (puzzle.markers.redBugJobs.includes(job)) {
-    markers.push({ key: 'red-bug', className: 'red-bug', label: 'Red bug', content: 'R', icon: markerIconUrl('eden/orange.png') });
+    markers.push({
+      key: "red-bug",
+      className: "red-bug",
+      label: "Red bug",
+      content: "R",
+      icon: markerIconUrl("eden/orange.png"),
+    });
   }
   if (puzzle.markers.blueBugJobs.includes(job)) {
-    markers.push({ key: 'blue-bug', className: 'blue-bug', label: 'Blue bug', content: 'B', icon: markerIconUrl('eden/blue.png') });
+    markers.push({
+      key: "blue-bug",
+      className: "blue-bug",
+      label: "Blue bug",
+      content: "B",
+      icon: markerIconUrl("eden/blue.png"),
+    });
   }
   if (puzzle.markers.stackJob === job) {
-    markers.push({ key: 'stack', className: 'stack', label: 'Stack marker', content: 'ST', icon: markerIconUrl('circle.png') });
+    markers.push({
+      key: "stack",
+      className: "stack",
+      label: "Stack marker",
+      content: "ST",
+      icon: markerIconUrl("circle.png"),
+    });
   }
 
   const limit = puzzle.markers.limitCut.find((marker) => marker.job === job);
   if (limit) {
     markers.push({
-      key: 'limit',
-      className: 'limit',
+      key: "limit",
+      className: "limit",
       label: `Limit cut ${limit.order}`,
       content: limit.order,
       icon: markerIconUrl(`limit${limit.order}.png`),

@@ -1,25 +1,31 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Archive } from './components/Archive';
-import { Board } from './components/Board';
-import { Header } from './components/Header';
-import { OrderPanel } from './components/OrderPanel';
-import { PollCard } from './components/PollCard';
-import { Privacy } from './components/Privacy';
-import { ShareDialog } from './components/ShareDialog';
-import { StartDialog } from './components/StartDialog';
-import { Stats } from './components/Stats';
-import { TutorialModal } from './components/TutorialModal';
-import { countSatisfied, evaluateAllClues } from './game/clues';
-import { swapSlots } from './game/board';
-import { puzzleForDate, puzzleForToday, todayKey } from './game/puzzles';
-import type { BoardSlots, DifficultyId, PositionId, SolveRecord } from './game/types';
-import { loadRecords, loadSettings, saveRecord, saveSettings, type Settings } from './storage/localStats';
+import { useEffect, useMemo, useState } from "react";
+import { Archive } from "./components/Archive";
+import { Board } from "./components/Board";
+import { Header } from "./components/Header";
+import { OrderPanel } from "./components/OrderPanel";
+import { PollCard } from "./components/PollCard";
+import { Privacy } from "./components/Privacy";
+import { ShareDialog } from "./components/ShareDialog";
+import { StartDialog } from "./components/StartDialog";
+import { Stats } from "./components/Stats";
+import { TutorialModal } from "./components/TutorialModal";
+import { countSatisfied, evaluateAllClues } from "./game/clues";
+import { swapSlots } from "./game/board";
+import { puzzleForDate, puzzleForToday, todayKey } from "./game/puzzles";
+import type { BoardSlots, DifficultyId, PositionId, SolveRecord } from "./game/types";
+import {
+  loadRecords,
+  loadSettings,
+  saveRecord,
+  saveSettings,
+  type Settings,
+} from "./storage/localStats";
 
 const DIFFICULTY_LABEL: Record<DifficultyId, string> = {
-  normal: 'Normal',
-  extreme: 'Extreme',
-  savage: 'Savage',
-  ultimate: 'Ultimate',
+  normal: "Normal",
+  extreme: "Extreme",
+  savage: "Savage",
+  ultimate: "Ultimate",
 };
 
 export function App() {
@@ -29,33 +35,38 @@ export function App() {
 
   useEffect(() => {
     const handlePop = () => setLocation(readLocation());
-    window.addEventListener('popstate', handlePop);
-    return () => window.removeEventListener('popstate', handlePop);
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
   }, []);
 
   const navigate = (path: string, search?: URLSearchParams) => {
     const query = search?.toString();
-    const url = `${path}${query ? `?${query}` : ''}`;
-    window.history.pushState(null, '', url);
+    const url = `${path}${query ? `?${query}` : ""}`;
+    window.history.pushState(null, "", url);
     setLocation(readLocation());
   };
 
-  if (location.pathname === '/archive') {
+  if (location.pathname === "/archive") {
     return <Archive onNavigate={navigate} />;
   }
 
-  if (location.pathname === '/stats') {
-    return <Stats records={records} onNavigate={navigate} onRecordsChanged={() => setRecords(loadRecords())} />;
+  if (location.pathname === "/stats") {
+    return (
+      <Stats
+        records={records}
+        onNavigate={navigate}
+        onRecordsChanged={() => setRecords(loadRecords())}
+      />
+    );
   }
 
-  if (location.pathname === '/privacy') {
+  if (location.pathname === "/privacy") {
     return <Privacy onNavigate={navigate} />;
   }
 
   return (
     <GamePage
-      dateKey={location.search.get('date') ?? todayKey()}
-      records={records}
+      dateKey={location.search.get("date") ?? todayKey()}
       settings={settings}
       onRecordsChanged={() => setRecords(loadRecords())}
       onSettingsChanged={(next) => {
@@ -69,17 +80,25 @@ export function App() {
 
 interface GamePageProps {
   dateKey: string;
-  records: SolveRecord[];
   settings: Settings;
   onRecordsChanged(): void;
   onSettingsChanged(settings: Settings): void;
   onNavigate(path: string, search?: URLSearchParams): void;
 }
 
-function GamePage({ dateKey, records, settings, onRecordsChanged, onSettingsChanged, onNavigate }: GamePageProps) {
-  const puzzle = useMemo(() => (dateKey === todayKey() ? puzzleForToday() : puzzleForDate(dateKey)), [dateKey]);
+function GamePage({
+  dateKey,
+  settings,
+  onRecordsChanged,
+  onSettingsChanged,
+  onNavigate,
+}: GamePageProps) {
+  const puzzle = useMemo(
+    () => (dateKey === todayKey() ? puzzleForToday() : puzzleForDate(dateKey)),
+    [dateKey],
+  );
   const [board, setBoard] = useState<BoardSlots>(puzzle.starting);
-  const [started, setStarted] = useState(dateKey === 'tutorial');
+  const [started, setStarted] = useState(dateKey === "tutorial");
   const [blindProg, setBlindProg] = useState(false);
   const [revealed, setRevealed] = useState<Set<PositionId>>(() => new Set());
   const [selected, setSelected] = useState<PositionId | undefined>();
@@ -88,14 +107,14 @@ function GamePage({ dateKey, records, settings, onRecordsChanged, onSettingsChan
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
-  const [tutorialOpen, setTutorialOpen] = useState(dateKey === 'tutorial');
+  const [tutorialOpen, setTutorialOpen] = useState(dateKey === "tutorial");
   const [recordSaved, setRecordSaved] = useState(false);
   const clueStatuses = evaluateAllClues(puzzle, board);
   const solved = clueStatuses.every(Boolean);
 
   useEffect(() => {
     setBoard(puzzle.starting);
-    setStarted(dateKey === 'tutorial');
+    setStarted(dateKey === "tutorial");
     setBlindProg(false);
     setRevealed(new Set());
     setSelected(undefined);
@@ -104,7 +123,7 @@ function GamePage({ dateKey, records, settings, onRecordsChanged, onSettingsChan
     setShareOpen(false);
     setCopied(false);
     setTutorialStep(0);
-    setTutorialOpen(dateKey === 'tutorial');
+    setTutorialOpen(dateKey === "tutorial");
     setRecordSaved(false);
   }, [dateKey, puzzle]);
 
@@ -137,7 +156,17 @@ function GamePage({ dateKey, records, settings, onRecordsChanged, onSettingsChan
     setRecordSaved(true);
     setShareOpen(true);
     onRecordsChanged();
-  }, [blindProg, elapsed, onRecordsChanged, puzzle, recordSaved, settings.easyMode, solved, started, swaps]);
+  }, [
+    blindProg,
+    elapsed,
+    onRecordsChanged,
+    puzzle,
+    recordSaved,
+    settings.easyMode,
+    solved,
+    started,
+    swaps,
+  ]);
 
   const reset = (keepStarted = true) => {
     setBoard(puzzle.starting);
@@ -152,18 +181,18 @@ function GamePage({ dateKey, records, settings, onRecordsChanged, onSettingsChan
   };
 
   const startTutorial = () => {
-    const search = new URLSearchParams({ date: 'tutorial' });
-    onNavigate('/', search);
+    const search = new URLSearchParams({ date: "tutorial" });
+    onNavigate("/", search);
   };
 
   const shareText = () => {
-    const mode = `${settings.easyMode ? 'Easy Mode' : 'Classic'}${blindProg ? ' Blind Prog' : ''}`;
+    const mode = `${settings.easyMode ? "Easy Mode" : "Classic"}${blindProg ? " Blind Prog" : ""}`;
     return [
       `Clock Spots Open ${puzzle.dateLabel} (${DIFFICULTY_LABEL[puzzle.difficulty]})`,
       `${countSatisfied(puzzle, board)}/${puzzle.clues.length} clues - ${elapsed}s - ${swaps} swaps`,
       mode.trim(),
       window.location.origin,
-    ].join('\n');
+    ].join("\n");
   };
 
   return (
@@ -183,14 +212,18 @@ function GamePage({ dateKey, records, settings, onRecordsChanged, onSettingsChan
         }}
       />
 
-      <main className={`game-layout ${started ? '' : 'prestart'}`}>
+      <main className={`game-layout ${started ? "" : "prestart"}`}>
         <div className="left-rail">
           <section className="clue-summary">
             <h2>Clues</h2>
             <p>
               {clueStatuses.filter(Boolean).length}/{puzzle.clues.length} satisfied
             </p>
-            {puzzle.solutionCount > 1 ? <span className="muted">{puzzle.solutionCount} valid plans</span> : <span className="muted">unique plan</span>}
+            {puzzle.solutionCount > 1 ? (
+              <span className="muted">{puzzle.solutionCount} valid plans</span>
+            ) : (
+              <span className="muted">unique plan</span>
+            )}
           </section>
         </div>
         <Board
@@ -202,7 +235,9 @@ function GamePage({ dateKey, records, settings, onRecordsChanged, onSettingsChan
           revealedPositions={revealed}
           selectedPosition={selected}
           onReveal={(position) => setRevealed((current) => new Set(current).add(position))}
-          onSelect={(position) => setSelected((current) => (current === position ? undefined : position))}
+          onSelect={(position) =>
+            setSelected((current) => (current === position ? undefined : position))
+          }
           onSwap={(a, b) => {
             if (!started || solved) {
               return;
@@ -228,7 +263,12 @@ function GamePage({ dateKey, records, settings, onRecordsChanged, onSettingsChan
         />
       ) : null}
 
-      <TutorialModal open={tutorialOpen} step={tutorialStep} onStep={setTutorialStep} onClose={() => setTutorialOpen(false)} />
+      <TutorialModal
+        open={tutorialOpen}
+        step={tutorialStep}
+        onStep={setTutorialStep}
+        onClose={() => setTutorialOpen(false)}
+      />
 
       <ShareDialog
         open={shareOpen}
@@ -256,7 +296,7 @@ function GamePage({ dateKey, records, settings, onRecordsChanged, onSettingsChan
 
       <footer className="site-footer">
         <span>Fan-made open clone. No Clock Spots source or assets are included.</span>
-        <button className="link-button" type="button" onClick={() => onNavigate('/privacy')}>
+        <button className="link-button" type="button" onClick={() => onNavigate("/privacy")}>
           Privacy Policy
         </button>
         <span>FFXIV visual assets are vendored from XIVPlan. © SQUARE ENIX CO., LTD.</span>

@@ -1,6 +1,13 @@
-import { JOBS, jobHasTag } from './jobs';
-import type { BoardSlots, JobId, KnockbackDirection, PositionGroup, PositionId, TagId } from './types';
-import { POSITIONS } from './types';
+import { JOBS, jobHasTag } from "./jobs";
+import type {
+  BoardSlots,
+  JobId,
+  KnockbackDirection,
+  PositionGroup,
+  PositionId,
+  TagId,
+} from "./types";
+import { POSITIONS } from "./types";
 
 export function positionIndex(position: PositionId): number {
   return POSITIONS.indexOf(position);
@@ -46,18 +53,18 @@ export function roleAt(board: BoardSlots, position: PositionId) {
 
 export function positionsInGroup(group: PositionGroup): PositionId[] {
   switch (group) {
-    case 'cardinal':
-      return ['N', 'E', 'S', 'W'];
-    case 'intercardinal':
-      return ['NE', 'SE', 'SW', 'NW'];
-    case 'north':
-      return ['NW', 'N', 'NE'];
-    case 'south':
-      return ['SW', 'S', 'SE'];
-    case 'east':
-      return ['NE', 'E', 'SE'];
-    case 'west':
-      return ['NW', 'W', 'SW'];
+    case "cardinal":
+      return ["N", "E", "S", "W"];
+    case "intercardinal":
+      return ["NE", "SE", "SW", "NW"];
+    case "north":
+      return ["NW", "N", "NE"];
+    case "south":
+      return ["SW", "S", "SE"];
+    case "east":
+      return ["NE", "E", "SE"];
+    case "west":
+      return ["NW", "W", "SW"];
     default:
       return [...POSITIONS];
   }
@@ -68,24 +75,28 @@ export function applyKnockback(position: PositionId, direction?: KnockbackDirect
     return position;
   }
 
-  const northToSouth: Partial<Record<PositionId, PositionId>> = { NW: 'SW', N: 'S', NE: 'SE' };
-  const southToNorth: Partial<Record<PositionId, PositionId>> = { SW: 'NW', S: 'N', SE: 'NE' };
-  const eastToWest: Partial<Record<PositionId, PositionId>> = { NE: 'NW', E: 'W', SE: 'SW' };
-  const westToEast: Partial<Record<PositionId, PositionId>> = { NW: 'NE', W: 'E', SW: 'SE' };
+  const northToSouth: Partial<Record<PositionId, PositionId>> = { NW: "SW", N: "S", NE: "SE" };
+  const southToNorth: Partial<Record<PositionId, PositionId>> = { SW: "NW", S: "N", SE: "NE" };
+  const eastToWest: Partial<Record<PositionId, PositionId>> = { NE: "NW", E: "W", SE: "SW" };
+  const westToEast: Partial<Record<PositionId, PositionId>> = { NW: "NE", W: "E", SW: "SE" };
 
   switch (direction) {
-    case 'north':
+    case "north":
       return northToSouth[position] ?? position;
-    case 'south':
+    case "south":
       return southToNorth[position] ?? position;
-    case 'east':
+    case "east":
       return eastToWest[position] ?? position;
-    case 'west':
+    case "west":
       return westToEast[position] ?? position;
   }
 }
 
-export function transformedJobPosition(board: BoardSlots, jobId: JobId, direction?: KnockbackDirection): PositionId {
+export function transformedJobPosition(
+  board: BoardSlots,
+  jobId: JobId,
+  direction?: KnockbackDirection,
+): PositionId {
   return applyKnockback(positionOfJob(board, jobId), direction);
 }
 
@@ -107,7 +118,7 @@ export function sameBoard(a: BoardSlots, b: BoardSlots): boolean {
 
 export function boardFromJobs(jobs: JobId[]): BoardSlots {
   if (jobs.length !== POSITIONS.length) {
-    throw new Error('A board needs exactly eight jobs');
+    throw new Error("A board needs exactly eight jobs");
   }
 
   return POSITIONS.reduce((slots, position, index) => {

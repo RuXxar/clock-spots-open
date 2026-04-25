@@ -1,12 +1,12 @@
-import type { SolveRecord } from '../game/types';
+import type { SolveRecord } from "../game/types";
 
-const RECORDS_KEY = 'clock-spots-open:records';
-const SETTINGS_KEY = 'clock-spots-open:settings';
+const RECORDS_KEY = "clock-spots-open:records";
+const SETTINGS_KEY = "clock-spots-open:settings";
 
 export interface Settings {
   easyMode: boolean;
   pollDismissed: boolean;
-  pollVote?: 'yes' | 'no';
+  pollVote?: "yes" | "no";
 }
 
 const defaultSettings: Settings = {
@@ -51,8 +51,8 @@ export function exportStatsCode(): string {
 }
 
 export function importStatsCode(code: string): { added: number; updated: number } {
-  if (!code.startsWith('cso1:')) {
-    throw new Error('Backup codes must start with cso1:');
+  if (!code.startsWith("cso1:")) {
+    throw new Error("Backup codes must start with cso1:");
   }
 
   const payload = JSON.parse(decodeURIComponent(escape(atob(code.slice(5))))) as {
@@ -62,7 +62,7 @@ export function importStatsCode(code: string): { added: number; updated: number 
   };
 
   if (payload.version !== 1 || !Array.isArray(payload.records)) {
-    throw new Error('Unsupported backup code');
+    throw new Error("Unsupported backup code");
   }
 
   const current = loadRecords();
