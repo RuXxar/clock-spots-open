@@ -84,9 +84,7 @@ export function Board({
         </div>
         {POSITIONS.map((position) => {
           const job = board[position];
-          const clue = puzzle.clues.find(
-            (item) => item.position === position && item.kind !== "mechanic",
-          );
+          const clue = puzzle.clues.find((item) => item.position === position);
           const clueIndex = clue ? puzzle.clues.indexOf(clue) : -1;
           const visible = !blindProg || revealedPositions.has(position);
           const satisfied = clueIndex >= 0 ? clueStatuses[clueIndex] : false;
