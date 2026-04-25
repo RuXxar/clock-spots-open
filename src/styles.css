@@ -414,17 +414,13 @@ button.primary,
   filter: drop-shadow(0 0 0.42rem rgba(96, 165, 250, 0.78));
 }
 
-.rescue-layer marker path {
-  fill: #c4b5fd;
-}
-
 .rescue-link {
-  stroke: #c4b5fd;
-  stroke-width: 2;
+  stroke: #5ee7a6;
+  stroke-width: 1.15;
   stroke-linecap: round;
-  stroke-dasharray: 4 3;
-  animation: tether-flow 520ms linear infinite;
-  filter: drop-shadow(0 0 0.5rem rgba(196, 181, 253, 0.86));
+  stroke-dasharray: 2.2 2.4;
+  animation: tether-flow 680ms linear infinite;
+  filter: drop-shadow(0 0 0.34rem rgba(94, 231, 166, 0.78));
 }
 
 .mechanic-callout {
@@ -446,8 +442,8 @@ button.primary,
 }
 
 .rescue-target-callout {
-  border-color: rgba(196, 181, 253, 0.75);
-  color: #ede9fe;
+  border-color: rgba(94, 231, 166, 0.78);
+  color: #dcfce7;
   transform: translate(-50%, -185%);
 }
 

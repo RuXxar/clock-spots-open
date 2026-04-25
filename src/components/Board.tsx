@@ -323,18 +323,6 @@ function RescueLinks({
   return (
     <>
       <svg className="mechanic-guide-layer rescue-layer" viewBox="0 0 100 100" aria-hidden="true">
-        <defs>
-          <marker
-            id="rescue-arrow"
-            markerWidth="5"
-            markerHeight="5"
-            refX="4"
-            refY="2.5"
-            orient="auto"
-          >
-            <path d="M0,0 L5,2.5 L0,5 Z" />
-          </marker>
-        </defs>
         {puzzle.markers.rescueJobs.map((job) => {
           const targetPosition = positionOfJob(board, job);
           const healerPosition = offsetPosition(targetPosition, puzzle.rescueOffset);
@@ -344,7 +332,6 @@ function RescueLinks({
             <line
               className="rescue-link"
               key={`rescue-${job}`}
-              markerEnd="url(#rescue-arrow)"
               x1={target.x}
               y1={target.y}
               x2={healer.x}
