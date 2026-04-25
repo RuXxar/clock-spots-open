@@ -5,13 +5,10 @@ const SETTINGS_KEY = "clock-spots-open:settings";
 
 export interface Settings {
   easyMode: boolean;
-  pollDismissed: boolean;
-  pollVote?: "yes" | "no";
 }
 
 const defaultSettings: Settings = {
   easyMode: false,
-  pollDismissed: false,
 };
 
 export function loadRecords(): SolveRecord[] {
@@ -34,11 +31,11 @@ export function clearRecords(): void {
 }
 
 export function loadSettings(): Settings {
-  return { ...defaultSettings, ...readJson<Partial<Settings>>(SETTINGS_KEY, {}) };
+  return normalizeSettings(readJson<Partial<Settings>>(SETTINGS_KEY, {}));
 }
 
 export function saveSettings(settings: Settings): void {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(normalizeSettings(settings)));
 }
 
 export function exportStatsCode(): string {
@@ -95,4 +92,10 @@ function readJson<T>(key: string, fallback: T): T {
   } catch {
     return fallback;
   }
+}
+
+function normalizeSettings(settings: Partial<Settings>): Settings {
+  return {
+    easyMode: settings.easyMode ?? defaultSettings.easyMode,
+  };
 }

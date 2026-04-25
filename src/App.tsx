@@ -3,7 +3,6 @@ import { Archive } from "./components/Archive";
 import { Board } from "./components/Board";
 import { Header } from "./components/Header";
 import { OrderPanel } from "./components/OrderPanel";
-import { PollCard } from "./components/PollCard";
 import { Privacy } from "./components/Privacy";
 import { ShareDialog } from "./components/ShareDialog";
 import { StartDialog } from "./components/StartDialog";
@@ -285,13 +284,6 @@ function GamePage({
           await navigator.clipboard?.writeText(shareText()).catch(() => undefined);
           setCopied(true);
         }}
-      />
-
-      <PollCard
-        dismissed={settings.pollDismissed}
-        vote={settings.pollVote}
-        onDismiss={() => onSettingsChanged({ ...settings, pollDismissed: true })}
-        onVote={(pollVote) => onSettingsChanged({ ...settings, pollVote })}
       />
 
       <footer className="site-footer">

@@ -191,7 +191,6 @@ button.primary,
 
 .clue-summary,
 .order-panel,
-.poll-card,
 .modal-panel,
 .tutorial-popover,
 .metric-card,
@@ -563,8 +562,7 @@ button.primary,
   text-align: center;
 }
 
-.modal-panel .close,
-.poll-card .close {
+.modal-panel .close {
   position: absolute;
   top: 0.55rem;
   right: 0.55rem;
@@ -608,42 +606,6 @@ button.primary,
 .tutorial-footer div {
   display: flex;
   gap: 0.5rem;
-}
-
-.poll-card {
-  position: fixed;
-  right: 1rem;
-  bottom: 4.4rem;
-  z-index: 16;
-  width: min(20rem, calc(100vw - 2rem));
-  padding: 1rem;
-}
-
-.poll-card h2 {
-  margin: 0 2rem 0.4rem 0;
-  color: var(--muted);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.poll-card p {
-  margin: 0 0 0.75rem;
-}
-
-.poll-options {
-  display: grid;
-  gap: 0.42rem;
-  margin-bottom: 0.75rem;
-}
-
-.poll-options label {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 0.45rem 0.55rem;
 }
 
 .site-footer {
@@ -899,12 +861,6 @@ textarea {
 
   .two-column {
     grid-template-columns: 1fr;
-  }
-
-  .poll-card {
-    position: static;
-    width: min(100%, 44rem);
-    margin: 1rem auto 0;
   }
 
   .site-footer {

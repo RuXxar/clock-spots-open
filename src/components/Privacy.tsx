@@ -15,9 +15,8 @@ export function Privacy({ onNavigate }: { onNavigate(path: string): void }) {
         backend.
       </p>
       <p>
-        Puzzle progress, settings, local poll choices, and solve history are saved in this browser
-        using local storage. That data stays on this device unless you export a backup code from the
-        stats page.
+        Puzzle progress, settings, and solve history are saved in this browser using local storage.
+        That data stays on this device unless you export a backup code from the stats page.
       </p>
       <p>No data is sold, traded, or shared by this app.</p>
     </main>
